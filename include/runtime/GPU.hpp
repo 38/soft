@@ -15,12 +15,12 @@ namespace GPURuntime{
 		static inline void* allocate(unsigned size)
 		{
 			void* ptr;
-			cudaMalloc(size, &ptr);
+			cudaMalloc(&ptr, size);
 			return ptr;
 		}
 		static inline void deallocate(DeviceMemory mem)
 		{
-			cudaFree(mem)
+			cudaFree(mem);
 		}
 		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) 
 		{
