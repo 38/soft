@@ -20,6 +20,9 @@
 #include <symbol/coorinate.hpp>
 #include <symbol/basicops.hpp>
 
+/* define functions */
+#include <functions/math.hpp>
+
 /* the printing backend for debugging */
 #include <util/printing_backend.hpp>
 

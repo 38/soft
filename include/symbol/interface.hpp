@@ -143,7 +143,7 @@ struct SymbolicExpression{
 				typedef GetRange<op> RangeFinder;\
 				RangeFinder::get_range(operand, lx, ly, lz, hx, hy, hz);\
 			}\
-			const op& operand; \
+			const op operand; \
 		};\
 		template <typename op>\
 		struct GetNumOperands<symbol_##id<op> >{\
@@ -196,8 +196,8 @@ struct SymbolicExpression{
 				if(hy > thy) hy = thy;\
 				if(hz > thz) hz = thz;\
 			}\
-			const left& operand_l;\
-			const right& operand_r;\
+			const left operand_l;\
+			const right operand_r;\
 		};\
 		template <typename left, typename right>\
 		struct GetNumOperands<symbol_##id<left, right> >{\
