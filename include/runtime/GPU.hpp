@@ -43,6 +43,7 @@ namespace GPURuntime{
 		static bool execute(const Executable& e)
 		{
 			int lx, ly, lz, hx, hy, hz;
+			GetRange<typename Executable::Symbol>::get_range(e._s, lx, ly, lz, hx, hy, hz);
 			dim3 block_dim(8,8,8);
 			dim3 grid_dim( ceil(hx - lx, 8),
 					       ceil(hy - ly, 8),
