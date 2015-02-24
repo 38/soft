@@ -5,7 +5,7 @@ namespace GPURuntime{
 	struct MemoryBlock{
 		void* mem;
 		MemoryBlock(size_t size){
-			mem = cudaMalloc(size);
+			cudaMalloc(size, &mem);
 		}
 		~MemoryBlock(){
 			cudaFree(mem);
