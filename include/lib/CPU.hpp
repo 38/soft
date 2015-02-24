@@ -91,9 +91,7 @@ namespace CPULib{
 		}
 	};
 
-
-
-#define SCALAR_RULE_2ARGS(sym, expr)\
+#define CPU_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
 	struct ScalarLib<REFSYM(sym)<left, right> >{\
 		typedef typename ExprTypeInfer<left>::R LType;\
@@ -105,7 +103,7 @@ namespace CPULib{
 		}\
 	}
 
-#define SCALAR_RULE_1ARG(sym, expr)\
+#define CPU_SCALAR_RULE_1ARG(sym, expr)\
 	template<typename Operand>\
 	struct ScalarLib<REFSYM(sym)<Operand> >{\
 		typedef typename ExprTypeInfer<Operand>::R OPType;\
@@ -117,35 +115,35 @@ namespace CPULib{
 	}
 
 	/* Basic Operators */
-	SCALAR_RULE_2ARGS(add, _1 + _2);
-	SCALAR_RULE_2ARGS(sub, _1 - _2);
-	SCALAR_RULE_2ARGS(mul, _1 * _2);
-	SCALAR_RULE_2ARGS(div, _1 / _2);
-	SCALAR_RULE_2ARGS(and, _1 & _2);
-	SCALAR_RULE_2ARGS(or, _1 | _2);
-	SCALAR_RULE_2ARGS(xor, _1 ^ _2);
-	SCALAR_RULE_2ARGS(assign, _1 = _2);
-	SCALAR_RULE_1ARG (neg, -_1);
-	SCALAR_RULE_1ARG (not, ~_1);
+	CPU_SCALAR_RULE_2ARGS(add, _1 + _2);
+	CPU_SCALAR_RULE_2ARGS(sub, _1 - _2);
+	CPU_SCALAR_RULE_2ARGS(mul, _1 * _2);
+	CPU_SCALAR_RULE_2ARGS(div, _1 / _2);
+	CPU_SCALAR_RULE_2ARGS(and, _1 & _2);
+	CPU_SCALAR_RULE_2ARGS(or, _1 | _2);
+	CPU_SCALAR_RULE_2ARGS(xor, _1 ^ _2);
+	CPU_SCALAR_RULE_2ARGS(assign, _1 = _2);
+	CPU_SCALAR_RULE_1ARG (neg, -_1);
+	CPU_SCALAR_RULE_1ARG (not, ~_1);
 	
-	SCALAR_RULE_2ARGS(lt, _1 < _2);
-	SCALAR_RULE_2ARGS(gt, _1 > _2);
-	SCALAR_RULE_2ARGS(eq, _1 == _2);
-	SCALAR_RULE_2ARGS(le, _1 <= _2);
-	SCALAR_RULE_2ARGS(ge, _1 >= _2);
-	SCALAR_RULE_2ARGS(ne, _1 != _2);
+	CPU_SCALAR_RULE_2ARGS(lt, _1 < _2);
+	CPU_SCALAR_RULE_2ARGS(gt, _1 > _2);
+	CPU_SCALAR_RULE_2ARGS(eq, _1 == _2);
+	CPU_SCALAR_RULE_2ARGS(le, _1 <= _2);
+	CPU_SCALAR_RULE_2ARGS(ge, _1 >= _2);
+	CPU_SCALAR_RULE_2ARGS(ne, _1 != _2);
 
 	/* Math Functions */
-	SCALAR_RULE_1ARG(sin, std::sin(_1));
-	SCALAR_RULE_1ARG(cos, std::cos(_1));
-	SCALAR_RULE_1ARG(tan, std::tan(_1));
-	SCALAR_RULE_1ARG(asin, std::asin(_1));
-	SCALAR_RULE_1ARG(acos, std::acos(_1));
-	SCALAR_RULE_1ARG(atan, std::atan(_1));
-	SCALAR_RULE_1ARG(abs, std::abs(_1));
-	SCALAR_RULE_1ARG(exp, std::exp(_1));
-	SCALAR_RULE_1ARG(log, std::log(_1));
-	SCALAR_RULE_1ARG(sqrt, std::sqrt(_1));
+	CPU_SCALAR_RULE_1ARG(sin, std::sin(_1));
+	CPU_SCALAR_RULE_1ARG(cos, std::cos(_1));
+	CPU_SCALAR_RULE_1ARG(tan, std::tan(_1));
+	CPU_SCALAR_RULE_1ARG(asin, std::asin(_1));
+	CPU_SCALAR_RULE_1ARG(acos, std::acos(_1));
+	CPU_SCALAR_RULE_1ARG(atan, std::atan(_1));
+	CPU_SCALAR_RULE_1ARG(abs, std::abs(_1));
+	CPU_SCALAR_RULE_1ARG(exp, std::exp(_1));
+	CPU_SCALAR_RULE_1ARG(log, std::log(_1));
+	CPU_SCALAR_RULE_1ARG(sqrt, std::sqrt(_1));
 
 }
 namespace SpatialOps{
