@@ -11,6 +11,14 @@ namespace GPURuntime{
 			cudaFree(mem);
 		}
 	};
+	template <typename Executable>
+	__kernel__ static void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
+	{
+		int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
+		int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
+		int z = lz + threadIdx.z + blockIdx.z * blockDim.z;
+		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_GPU>::execute(x, y, z, e);
+	}
 	static std::map<int, MemoryBlock*> _mem_map;
 	struct GPURunTimeEnv{
 		static inline void* allocate(int token, size_t size)
@@ -26,14 +34,6 @@ namespace GPURuntime{
 			delete(_mem_map[token]);
 			_mem_map.erase(_mem_map.find(token));
 			return 0;
-		}
-		template <typename Executable>
-		__kernel__ static void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
-		{
-			int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
-			int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
-			int z = lz + threadIdx.z + blockIdx.z * blockDim.z;
-			if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_GPU>::execute(x, y, z, e);
 		}
 		static inline ceil(int a, int b)
 		{
