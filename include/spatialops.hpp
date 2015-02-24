@@ -29,6 +29,7 @@
 /* the CPU Library */
 #include <lib/CPU.hpp>
 
+/* the CUDA Library */
 #ifdef __CUDACC__
 #include <lib/GPU.hpp>
 #endif
@@ -36,4 +37,7 @@
 /* runtime environment */
 #include <runtime/runtime.hpp>
 #include <runtime/CPU.hpp>
+#ifdef __CUDACC__
+#include <runtime/GPU.hpp>
+#endif
 #endif
