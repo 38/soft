@@ -110,7 +110,7 @@ namespace SpatialOps{
 	template <>
 	struct InvokeDeviceMM<NUM_DEVICE_TYPES>{
 		static inline void notify_destruct(int id){}
-		static inline void notify_construct(int id){}
+		static inline void notify_construct(int id, int size){}
 		static inline int find_up_to_dated_copy(int id, int target_ts){return -1;}
 		static inline void copy_to_host(int id, int device, void* dest){}
 	};
