@@ -99,11 +99,11 @@ namespace SpatialOps{
 			void* host_mem = InvokeDeviceMM<DEVICE_TYPE_CPU>::get_memory(id);
 			
 			/* then copy the device memory to cpu */
-			if(uptodate_dev != DEVICE_TYPE_CPU) 
+			if(uptodate_dev != (int)DEVICE_TYPE_CPU) 
 				InvokeDeviceMM<0>::copy_to_host(id, uptodate_dev, host_mem);
 			
 			/* finally copy the host memory to target device */
-			if(DeviceType != DEVICE_TYPE_CPU)
+			if(DeviceType != (int)DEVICE_TYPE_CPU)
 				GetDeviceRuntimeEnv<DeviceType>::R::copy_from_host(get_memory_map()[id]->mem, host_mem, get_memory_map()[id]->size); 
 		}
 	};
