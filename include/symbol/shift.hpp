@@ -39,7 +39,7 @@ namespace SpatialOps{
 	};
 	template <typename operand, int x, int y, int z>
 	struct GetRange<symbol_shift<operand, x, y, z> >{
-		static const void get_range(const symbol_shift<operand, x,y,z>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
+		static void get_range(const symbol_shift<operand, x,y,z>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
 			e.get_range(lx, ly, lz, hx, hy, hz);
 		}

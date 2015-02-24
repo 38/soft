@@ -42,7 +42,7 @@ namespace SpatialOps{
 	};
 	template <typename operand>
 	struct GetRange<symbol_window<operand> >{
-		static const void get_range(const symbol_window<operand>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
+		static void get_range(const symbol_window<operand>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
 			e.get_range(lx, ly, lz, hx, hy, hz);
 		}

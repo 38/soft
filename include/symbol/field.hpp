@@ -86,7 +86,7 @@ namespace SpatialOps{
 	};
 	template <typename T>
 	struct GetRange<Field<T> >{
-		static const inline void get_range(const Field<T>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
+		static inline void get_range(const Field<T>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
 		{
 			e.get_range(lx, ly, lz, hx, hy, hz);
 		}
