@@ -81,8 +81,8 @@ namespace SpatialOps{
 		{
 			if(get_memory_map()[id]->timestamp > max_ts) max_ts = get_memory_map()[id]->timestamp;
 			int r = InvokeDeviceMM<DeviceType + 1>::find_up_to_dated_copy(id, max_ts);
-			if(r == -1) return DeviceType;
-			return r;
+			if(r == -1 && get_memory_map()[id]->timestamp == max_ts) return DeviceType;
+			return -1;
 		}
 
 		static inline void copy_to_host(int id, int device, void* dest)
