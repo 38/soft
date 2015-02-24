@@ -10,7 +10,6 @@ namespace GPURuntime{
 		int z = lz + threadIdx.z + blockIdx.z * blockDim.z;
 		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_CUDA>::execute(x, y, z, e);
 	}
-	static std::map<int, MemoryBlock*> _mem_map;
 	struct GPURunTimeEnv{
 		typedef void* DeviceMemory; 
 		static inline void* allocate(unsigned size)
