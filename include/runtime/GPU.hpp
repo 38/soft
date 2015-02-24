@@ -12,7 +12,7 @@ namespace GPURuntime{
 		}
 	};
 	template <typename Executable>
-	__kernel__ static void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
+	__global__ void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
 	{
 		int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
 		int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
@@ -35,7 +35,7 @@ namespace GPURuntime{
 			_mem_map.erase(_mem_map.find(token));
 			return 0;
 		}
-		static inline ceil(int a, int b)
+		static inline int ceil(int a, int b)
 		{
 			return (a + b - 1) / b;
 		}
