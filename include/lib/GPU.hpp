@@ -133,16 +133,16 @@ namespace GPULib{
 	GPU_SCALAR_RULE_2ARGS(ne, _1 != _2);
 
 	/* Math Functions */
-	GPU_SCALAR_RULE_1ARG(sin, std::sin(_1));
-	GPU_SCALAR_RULE_1ARG(cos, std::cos(_1));
-	GPU_SCALAR_RULE_1ARG(tan, std::tan(_1));
-	GPU_SCALAR_RULE_1ARG(asin, std::asin(_1));
-	GPU_SCALAR_RULE_1ARG(acos, std::acos(_1));
-	GPU_SCALAR_RULE_1ARG(atan, std::atan(_1));
-	GPU_SCALAR_RULE_1ARG(abs, std::abs(_1));
-	GPU_SCALAR_RULE_1ARG(exp, std::exp(_1));
-	GPU_SCALAR_RULE_1ARG(log, std::log(_1));
-	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt(_1));
+	GPU_SCALAR_RULE_1ARG(sin, std::sin((double)_1));
+	GPU_SCALAR_RULE_1ARG(cos, std::cos((double)_1));
+	GPU_SCALAR_RULE_1ARG(tan, std::tan((double)_1));
+	GPU_SCALAR_RULE_1ARG(asin, std::asin((double)_1));
+	GPU_SCALAR_RULE_1ARG(acos, std::acos((double)_1));
+	GPU_SCALAR_RULE_1ARG(atan, std::atan((double)_1));
+	GPU_SCALAR_RULE_1ARG(abs, std::abs((double)_1));
+	GPU_SCALAR_RULE_1ARG(exp, std::exp((double)_1));
+	GPU_SCALAR_RULE_1ARG(log, std::log((double)_1));
+	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
 
 }
 namespace SpatialOps{
