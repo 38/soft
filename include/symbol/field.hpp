@@ -79,10 +79,6 @@ namespace SpatialOps{
 
 		inline void print() const
 		{
-			unsigned size = (_high[0] - _low[0]) *
-				   		    (_high[1] - _low[1]) *
-						    (_high[2] - _low[2]) *
-						    sizeof(T);
 			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
 			for(int z = _low[2]; z < _high[2]; z ++)
 			{

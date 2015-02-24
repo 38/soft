@@ -24,11 +24,11 @@ namespace GPURuntime{
 		}
 		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) 
 		{
-			cudaMemcpy(dest, sour, cudaMemcpyHostToDevice);
+			cudaMemcpy(dest, sour, size, cudaMemcpyHostToDevice);
 		}
 		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size)
 		{
-			cudaMemcpy(dest, sour, cudaMemcpyDeviceToHost);
+			cudaMemcpy(dest, sour, size, cudaMemcpyDeviceToHost);
 		}
 		static inline DeviceMemory get_null_pointer()
 		{

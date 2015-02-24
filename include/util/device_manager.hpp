@@ -52,7 +52,7 @@ namespace SpatialOps{
 			if(get_memory_map().find(id) == get_memory_map().end())
 				get_memory_map()[id] = new MemoryMapValue(size);
 			get_memory_map()[id]->incref();
-			InvokeDeviceMM<DeviceType + 1>::notify_construct(id);
+			InvokeDeviceMM<DeviceType + 1>::notify_construct(id, size);
 		}
 		static inline void notify_destruct(int id)
 		{
