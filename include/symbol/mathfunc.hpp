@@ -1,0 +1,45 @@
+#ifndef __MATHFUNC_HPP__
+#define __MATHFUNC_HPP__
+#include <algorithm>
+#include <cmath>
+namespace SpatialOps{
+	/* Definition for the math function operators */
+	DEF_SYMBOL_1ARG(sin);
+	DEF_SYMBOL_1ARG(cos);
+	DEF_SYMBOL_1ARG(tan);
+	DEF_SYMBOL_1ARG(asin);
+	DEF_SYMBOL_1ARG(acos);
+	DEF_SYMBOL_1ARG(atan);
+	DEF_SYMBOL_1ARG(abs);
+	DEF_SYMBOL_1ARG(exp);
+	DEF_SYMBOL_1ARG(log);
+	DEF_SYMBOL_1ARG(sqrt);
+
+
+	/* Define the operators */
+	DEF_DEFAULT_OPERAND_1ARG(sin);
+	DEF_DEFAULT_OPERAND_1ARG(cos);
+	DEF_DEFAULT_OPERAND_1ARG(tan);
+	DEF_DEFAULT_OPERAND_1ARG(asin);
+	DEF_DEFAULT_OPERAND_1ARG(acos);
+	DEF_DEFAULT_OPERAND_1ARG(atan);
+	DEF_DEFAULT_OPERAND_1ARG(abs);
+	DEF_DEFAULT_OPERAND_1ARG(exp);
+	DEF_DEFAULT_OPERAND_1ARG(log);
+	DEF_DEFAULT_OPERAND_1ARG(sqrt);
+
+
+	/* Type inference section */
+	DEF_TYPE_INFERENCE_1ARG(sin, std::sin(_1));
+	DEF_TYPE_INFERENCE_1ARG(cos, std::cos(_1));
+	DEF_TYPE_INFERENCE_1ARG(tan, std::tan(_1));
+	DEF_TYPE_INFERENCE_1ARG(asin, std::asin(_1));
+	DEF_TYPE_INFERENCE_1ARG(acos, std::acos(_1));
+	DEF_TYPE_INFERENCE_1ARG(atan, std::atan(_1));
+	DEF_TYPE_INFERENCE_1ARG(abs, std::abs(_1));
+	DEF_TYPE_INFERENCE_1ARG(exp, std::exp(_1));
+	DEF_TYPE_INFERENCE_1ARG(log, std::log(_1));
+	DEF_TYPE_INFERENCE_1ARG(sqrt, std::sqrt(_1));
+}
+#endif
+
