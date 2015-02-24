@@ -2,31 +2,26 @@
 #ifndef __RUNTIME_CPU_HPP__
 #define __RUNTIME_CPU_HPP__
 namespace CPURuntime{
-	struct MemoryBlock{
-		void* mem;
-		MemoryBlock(size_t size){
-			mem = malloc(size);
+	struct CPURunTimeEnv{
+		typedef void* DeviceMemory; 
+		static inline void* allocate(unsigned size)
+		{
+			return malloc(size);
 		}
-		~MemoryBlock(){
+		static inline void deallocate(DeviceMemory mem)
+		{
 			free(mem);
 		}
-	};
-	static std::map<int, MemoryBlock*> _mem_map;
-	struct CPURunTimeEnv{
-		static inline void* allocate(int token, size_t size)
+		static inline DeviceMemory get_null_pointer()
 		{
-			if(_mem_map.find(token) == _mem_map.end())
-				_mem_map[token] = new MemoryBlock(size);
-			if(_mem_map[token]) return _mem_map[token]->mem;
 			return NULL;
 		}
-		static inline int deallocate(int token)
+		static inline bool is_valid_pointer(DeviceMemory ptr)
 		{
-			if(_mem_map.find(token) == _mem_map.end()) return 0;
-			delete(_mem_map[token]);
-			_mem_map.erase(_mem_map.find(token));
-			return 0;
+			return (ptr != NULL);
 		}
+		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) {}
+		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
 		template <typename Executable>
 		static bool execute(const Executable& e)
 		{

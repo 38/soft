@@ -2,15 +2,6 @@
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
-	struct MemoryBlock{
-		void* mem;
-		MemoryBlock(size_t size){
-			cudaMalloc(&mem, size);
-		}
-		~MemoryBlock(){
-			cudaFree(mem);
-		}
-	};
 	template <typename Executable>
 	__global__ void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
 	{
@@ -21,19 +12,32 @@ namespace GPURuntime{
 	}
 	static std::map<int, MemoryBlock*> _mem_map;
 	struct GPURunTimeEnv{
-		static inline void* allocate(int token, size_t size)
+		typedef void* DeviceMemory; 
+		static inline void* allocate(unsigned size)
 		{
-			if(_mem_map.find(token) == _mem_map.end())
-				_mem_map[token] = new MemoryBlock(size);
-			if(_mem_map[token]) return _mem_map[token]->mem;
+			void* ptr;
+			cudaMalloc(size, &ptr);
+			return ptr;
+		}
+		static inline void deallocate(DeviceMemory mem)
+		{
+			cudaFree(mem)
+		}
+		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) 
+		{
+			cudaMemcpy(dest, sour, cudaMemcpyHostToDevice);
+		}
+		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size)
+		{
+			cudaMemcpy(dest, sour, cudaMemcpyDeviceToHost);
+		}
+		static inline DeviceMemory get_null_pointer()
+		{
 			return NULL;
 		}
-		static inline int deallocate(int token)
+		static inline bool is_valid_pointer(DeviceMemory ptr)
 		{
-			if(_mem_map.find(token) == _mem_map.end()) return 0;
-			delete(_mem_map[token]);
-			_mem_map.erase(_mem_map.find(token));
-			return 0;
+			return (ptr != NULL);
 		}
 		static inline int ceil(int a, int b)
 		{

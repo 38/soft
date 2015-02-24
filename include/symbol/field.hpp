@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 namespace SpatialOps{
+	static unsigned next_id = 0;
 	/**
 	 * @brief the type for a spatial field
 	 * @detials This actually a field of symbol, DO NOT ALLOCATE ACTUALL MEMORY
@@ -16,7 +17,7 @@ namespace SpatialOps{
 		 * @brief construct a field within the given range
 		 **/
 		Field(int lx, int ly, int lz,
-			  int hx, int hy, int hz)
+			  int hx, int hy, int hz) : _timestamp(0)
 		{
 			_high[0] = hx;
 			_high[1] = hy;
@@ -24,8 +25,26 @@ namespace SpatialOps{
 			_low[0] = lx;
 			_low[1] = ly;
 			_low[2] = lz;
-			static unsigned next_id = 0;
 			_identifier = (next_id++);
+			size_t size = (_high[0] - _low[0]) *
+						  (_high[1] - _low[1]) *
+						  (_high[2] - _low[2]) *
+						  sizeof(T);
+			InvokeDeviceMM<>::notify_construct(_identifier, size);
+		}
+		Field(const Field& f) : _identifier(f._identifier), _timestamp(0)
+		{
+			_high[0] = f._high[0];
+			_high[1] = f._high[1];
+			_high[2] = f._high[2];
+			_low[0] = f._low[0];
+			_low[1] = f._low[1];
+			_low[2] = f._low[2];
+			size_t size = (_high[0] - _low[0]) *
+						  (_high[1] - _low[1]) *
+						  (_high[2] - _low[2]) *
+						  sizeof(T);
+			InvokeDeviceMM<>::notify_construct(_identifier, size);
 		}
 		inline const char* name() const
 		{
@@ -45,27 +64,26 @@ namespace SpatialOps{
 		}
 		~Field()
 		{
-			InvokeDeviceDestructor<>::notify(_identifier);
+			InvokeDeviceMM<>::notify_destruct(_identifier);
 		}
 		template <int DeviceId>
 		T* get_memory() const
 		{
-			size_t size = (_high[0] - _low[0]) *
-						  (_high[1] - _low[1]) *
-						  (_high[2] - _low[2]) *
-						  sizeof(T);
-			return (T*)GetDeviceRuntimeEnv<DeviceId>::R::allocate(_identifier, size);
+			T* ret = (T*)InvokeDeviceMM<DeviceId>::get_memory(_identifier);
+			int last_valid = InvokeDeviceMM<>::find_up_to_dated_copy(_identifier, _timestamp);
+			InvokeDeviceMM<DeviceId>::synchronize_device(_identifier, last_valid);
+			InvokeDeviceMM<DeviceId>::set_timestamp(_identifier, ++((Field*)this)->_timestamp);
+			return ret;
 		}
 		inline int getid(){return _identifier;}
 
-		template <int DeviceId>
 		inline void print() const
 		{
-			size_t size = (_high[0] - _low[0]) *
-						  (_high[1] - _low[1]) *
-						  (_high[2] - _low[2]) *
-						  sizeof(T);
-			T* _device_memory = (T*)GetDeviceRuntimeEnv<DeviceId>::R::allocate(_identifier, size);
+			unsigned size = (_high[0] - _low[0]) *
+				   		    (_high[1] - _low[1]) *
+						    (_high[2] - _low[2]) *
+						    sizeof(T);
+			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
 			for(int z = _low[2]; z < _high[2]; z ++)
 			{
 				for(int y = _low[1]; y < _high[1]; y ++)
@@ -83,6 +101,7 @@ namespace SpatialOps{
 			int _high[3];  /**!< the high bound of the field **/
 			int _low[3];   /**!< the low bound of the field **/
 			unsigned _identifier; /**!< the unique identifier of this field */
+			int _timestamp;
 	};
 	template <typename T>
 	struct GetRange<Field<T> >{

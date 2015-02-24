@@ -1,4 +1,4 @@
-CXX=g++#clang++-3.6
+CXX=clang++-3.6
 OBJS=main.o
 CFLAGS=-g
 INCLUDEDIR=-Iinclude

@@ -4,10 +4,11 @@ int main()
 {
 	Field<double> f(0,0,0,10,10,10);
 
-	f <<= (2 < window(3, 0, 0,0,0, 5,5,5));
+	f <<= 0;
+	f <<= (coordinate<XDir>() + coordinate<YDir>() + coordinate<ZDir>() );
 
 
-	f.print<DEVICE_TYPE_CPU>();
+	f.print();
 	
 	//typedef typeof(link<DEVICE_TYPE_CPU>(f <<= -(f + 1) + coordinate<XDir>() * 10 + coordinate<YDir>())) T;
 	//T t = link<DEVICE_TYPE_CPU>(f <<= -(f + 1) + coordinate<XDir>() * 10  + coordinate<YDir>()); 
