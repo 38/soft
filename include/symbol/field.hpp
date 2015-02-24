@@ -17,7 +17,7 @@ namespace SpatialOps{
 		 * @brief construct a field within the given range
 		 **/
 		Field(int lx, int ly, int lz,
-			  int hx, int hy, int hz) : _timestamp(0)
+			  int hx, int hy, int hz)
 		{
 			_high[0] = hx;
 			_high[1] = hy;
@@ -32,7 +32,7 @@ namespace SpatialOps{
 						  sizeof(T);
 			InvokeDeviceMM<>::notify_construct(_identifier, size);
 		}
-		Field(const Field& f) : _identifier(f._identifier), _timestamp(0)
+		Field(const Field& f) : _identifier(f._identifier)
 		{
 			_high[0] = f._high[0];
 			_high[1] = f._high[1];
@@ -69,10 +69,11 @@ namespace SpatialOps{
 		template <int DeviceId>
 		T* get_memory() const
 		{
+			int _timestamp = -1;
 			T* ret = (T*)InvokeDeviceMM<DeviceId>::get_memory(_identifier);
 			int last_valid = InvokeDeviceMM<>::find_up_to_dated_copy(_identifier, _timestamp);
 			InvokeDeviceMM<DeviceId>::synchronize_device(_identifier, last_valid);
-			InvokeDeviceMM<DeviceId>::set_timestamp(_identifier, ++((Field*)this)->_timestamp);
+			InvokeDeviceMM<DeviceId>::set_timestamp(_identifier, ++_timestamp);
 			return ret;
 		}
 		inline int getid(){return _identifier;}
@@ -97,7 +98,6 @@ namespace SpatialOps{
 			int _high[3];  /**!< the high bound of the field **/
 			int _low[3];   /**!< the low bound of the field **/
 			unsigned _identifier; /**!< the unique identifier of this field */
-			int _timestamp;
 	};
 	template <typename T>
 	struct GetRange<Field<T> >{

@@ -19,7 +19,7 @@ namespace SpatialOps{
 			unsigned size;
 			dev_mem_ptr_t mem;
 			int timestamp;
-			inline MemoryMapValue(unsigned sz): ref_cnt(0), mem(GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer()), size(sz), timestamp(0){}
+			inline MemoryMapValue(unsigned sz): ref_cnt(0), mem(GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer()), size(sz), timestamp(-1){}
 			inline void incref()
 			{
 				ref_cnt ++;
@@ -77,10 +77,12 @@ namespace SpatialOps{
 			get_memory_map()[id]->update_ts(ts);
 		}
 
-		static inline int find_up_to_dated_copy(int id, int target_ts)
+		static inline int find_up_to_dated_copy(int id, int& max_ts)
 		{
-			if(get_memory_map()[id]->timestamp == target_ts) return DeviceType;
-			return InvokeDeviceMM<DeviceType + 1>::find_up_to_dated_copy(id, target_ts);
+			if(get_memory_map()[id]->timestamp > max_ts) max_ts = get_memory_map()[id]->timestamp;
+			int r = InvokeDeviceMM<DeviceType + 1>::find_up_to_dated_copy(id, max_ts);
+			if(r == -1) return DeviceType;
+			return r;
 		}
 
 		static inline void copy_to_host(int id, int device, void* dest)

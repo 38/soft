@@ -2,8 +2,8 @@
 using namespace SpatialOps;
 int main()
 {
-	Field<double> f(0,0,0,20000,1,1);
-	Field<double> g(0,0,0,20000,1,1);
+	Field<double> f(0,0,0,200,1,1);
+	Field<double> g(0,0,0,200,1,1);
 
 	f <<= (coordinate<XDir>() * 0.0001) * (coordinate<XDir>() * 0.0001);
 
