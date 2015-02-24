@@ -37,7 +37,9 @@
 /* runtime environment */
 #include <runtime/runtime.hpp>
 #include <runtime/CPU.hpp>
+
 #ifdef __CUDACC__
 #include <runtime/GPU.hpp>
 #endif
+
 #endif
