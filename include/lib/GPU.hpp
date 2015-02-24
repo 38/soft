@@ -151,12 +151,12 @@ namespace GPULib{
 namespace SpatialOps{
 	/* Export the Library */
 	template <typename Expr, typename Executable>
-	struct InvokeDeviceLibrary<DEVICE_TYPE_GPU, Expr, Executable>
+	struct InvokeDeviceLibrary<DEVICE_TYPE_CUDA, Expr, Executable>
 	{
 		typedef GPULib::Lib<Expr, Executable> R;
 	};
 	template <>
-	struct GetExecutor<DEVICE_TYPE_GPU>
+	struct GetExecutor<DEVICE_TYPE_CUDA>
 	{
 		template <typename Executable>
 		__device__ static inline void execute(int x, int y, int z, const Executable& e)

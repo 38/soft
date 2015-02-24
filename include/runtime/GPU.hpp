@@ -17,7 +17,7 @@ namespace GPURuntime{
 		int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
 		int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
 		int z = lz + threadIdx.z + blockIdx.z * blockDim.z;
-		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_GPU>::execute(x, y, z, e);
+		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_CUDA>::execute(x, y, z, e);
 	}
 	static std::map<int, MemoryBlock*> _mem_map;
 	struct GPURunTimeEnv{
@@ -55,7 +55,7 @@ namespace GPURuntime{
 }
 namespace SpatialOps{
 	template <>
-	struct GetDeviceRuntimeEnv<DEVICE_TYPE_GPU>{
+	struct GetDeviceRuntimeEnv<DEVICE_TYPE_CUDA>{
 		typedef GPURuntime::GPURunTimeEnv R;
 	};
 }
