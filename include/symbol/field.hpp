@@ -59,7 +59,7 @@ namespace SpatialOps{
 		inline int getid(){return _identifier;}
 
 		template <int DeviceId>
-		inline const void print() const
+		inline void print() const
 		{
 			size_t size = (_high[0] - _low[0]) *
 						  (_high[1] - _low[1]) *

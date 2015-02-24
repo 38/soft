@@ -153,7 +153,7 @@ struct SymbolicExpression{
 		};\
 		template <typename op>\
 		struct GetRange<symbol_##id<op> >{\
-			static const void get_range(const symbol_##id<op>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
+			static void get_range(const symbol_##id<op>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
 			{\
 				e.get_range(lx, ly, lz, hx, hy, hz);\
 			}\
@@ -207,7 +207,7 @@ struct SymbolicExpression{
 		};\
 		template <typename left, typename right>\
 		struct GetRange<symbol_##id<left, right> >{\
-			static const void get_range(const symbol_##id<left, right>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
+			static void get_range(const symbol_##id<left, right>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
 			{\
 				e.get_range(lx, ly, lz, hx, hy, hz);\
 			}\
