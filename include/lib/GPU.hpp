@@ -48,9 +48,7 @@ namespace GPULib{
 		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
 		{
 			const Field<T>& f = e._s;
-			int lx, ly, lz, hx, hy, hz;
-			f.get_range(lx, ly, lz, hx, hy, hz);
-			return e._m[x + y * (hx - lx) + z * (hx - lx) * (hy - ly)];
+			return e._m[x + y * (e.hx - e.lx) + z * (e.hx - e.lx) * (e.hy - e.ly)];
 		}
 	};
 
