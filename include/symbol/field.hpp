@@ -81,12 +81,14 @@ namespace SpatialOps{
 		inline void print() const
 		{
 			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
-			for(int z = _low[2]; z < _high[2]; z ++)
+			int lx, ly, lz, hx, hy, hz;
+			get_range(lx, ly, lz, hx, hy, hz);
+			for(int z = lz; z < hz; z ++)
 			{
-				for(int y = _low[1]; y < _high[1]; y ++)
+				for(int y = ly; y < hy; y ++)
 				{
-					for(int x = _low[0]; x < _high[0]; x ++)
-						std::cout << _device_memory[x + (_high[0] - _low[0]) * y + (_high[0] - _low[0]) * (_high[1] - _low[1]) * z] << ' ';
+					for(int x = lx; x < hx; x ++)
+						std::cout << _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)] << '\t';
 					std::cout << std::endl;
 				}
 				std::cout << std::endl;

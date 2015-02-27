@@ -3,23 +3,23 @@
 namespace SpatialOps{
 
 	/* define the symbols */
-	DEF_SYMBOL_2ARGS(add);
-	DEF_SYMBOL_2ARGS(sub);
-	DEF_SYMBOL_2ARGS(mul);
-	DEF_SYMBOL_2ARGS(div);
-	DEF_SYMBOL_2ARGS(and);
-	DEF_SYMBOL_2ARGS(or);
-	DEF_SYMBOL_2ARGS(xor);
-	DEF_SYMBOL_2ARGS(assign);
-	DEF_SYMBOL_1ARG(neg);
-	DEF_SYMBOL_1ARG(not);
+	DEF_SYMBOL_2ARGS(add, false);
+	DEF_SYMBOL_2ARGS(sub, false);
+	DEF_SYMBOL_2ARGS(mul, false);
+	DEF_SYMBOL_2ARGS(div, false);
+	DEF_SYMBOL_2ARGS(and, false);
+	DEF_SYMBOL_2ARGS(or, false);
+	DEF_SYMBOL_2ARGS(xor, false);
+	DEF_SYMBOL_2ARGS(assign, true);
+	DEF_SYMBOL_1ARG(neg, false);
+	DEF_SYMBOL_1ARG(not, false);
 
-	DEF_SYMBOL_2ARGS(lt);
-	DEF_SYMBOL_2ARGS(gt);
-	DEF_SYMBOL_2ARGS(eq);
-	DEF_SYMBOL_2ARGS(le);
-	DEF_SYMBOL_2ARGS(ge);
-	DEF_SYMBOL_2ARGS(ne);
+	DEF_SYMBOL_2ARGS(lt, false);
+	DEF_SYMBOL_2ARGS(gt, false);
+	DEF_SYMBOL_2ARGS(eq, false);
+	DEF_SYMBOL_2ARGS(le, false);
+	DEF_SYMBOL_2ARGS(ge, false);
+	DEF_SYMBOL_2ARGS(ne, false);
 	
 	/* Define the operators */
 	DEF_DEFAULT_OPERAND_2ARGS(add, +);

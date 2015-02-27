@@ -127,15 +127,31 @@ struct SymbolicExpression{
 	SymbolicExpression():top_level(true){}
 	SymbolicExpression(const SymbolicExpression&):top_level(false){}
 };
+
+template <bool runnable>
+struct SymbolDestruction{
+	template<typename symexp>
+	static inline void invoke(const symexp& expr)
+	{
+		run(expr);
+	}
+};
+template <>
+struct SymbolDestruction<false>{
+	template<typename symexp>
+	static inline void invoke(const symexp& expr)
+	{}
+};
 /* Define a symbol with 1 arg */
-#define DEF_SYMBOL_1ARG(id) \
+#define DEF_SYMBOL_1ARG(id, runnable) \
 		template <typename op>\
 		struct symbol_##id: public SymbolicExpression{\
 			typedef op Operand;\
 			inline const char* name() const {return #id;}\
 			symbol_##id(const op& oper) :operand(oper){}\
 			~symbol_##id(){\
-				if(top_level) run(*this);\
+				if(top_level)\
+					SymbolDestruction<runnable>::template invoke<symbol_##id>(*this);\
 			}\
 			inline void get_range(int& lx, int& ly, int&lz,\
 								  int& hx, int& hy, int&hz) const\
@@ -171,7 +187,7 @@ struct SymbolicExpression{
 		}
 
 /* define a symbol with 2 args */
-#define DEF_SYMBOL_2ARGS(id) \
+#define DEF_SYMBOL_2ARGS(id, runnable) \
 		template <typename left, typename right>\
 		struct symbol_##id: public SymbolicExpression{\
 			typedef left Operand_l;\
@@ -179,7 +195,8 @@ struct SymbolicExpression{
 			inline const char* name() const {return #id;}\
 			symbol_##id(const left& l, const right& r) : operand_l(l), operand_r(r){}\
 			~symbol_##id(){\
-				if(top_level) run(*this);\
+				if(top_level)\
+					SymbolDestruction<runnable>::template invoke<symbol_##id>(*this);\
 			}\
 			inline void get_range(int& lx, int& ly, int&lz,\
 								  int& hx, int& hy, int&hz) const\

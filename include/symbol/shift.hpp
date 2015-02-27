@@ -22,12 +22,12 @@ namespace SpatialOps{
 		{
 			typedef GetRange<Operand> RangeFinder;
 			RangeFinder::get_range(operand, lx, ly, lz, hx, hy, hz);
-			if(lx != INT_MIN) lx += Dx;
-			if(ly != INT_MIN) ly += Dy;
-			if(lz != INT_MIN) lz += Dz;
-			if(hx != INT_MAX) hx += Dx;
-			if(hy != INT_MAX) hy += Dy;
-			if(hz != INT_MAX) hz += Dz;
+			if(lx != INT_MIN) lx -= Dx;
+			if(ly != INT_MIN) ly -= Dy;
+			if(lz != INT_MIN) lz -= Dz;
+			if(hx != INT_MAX) hx -= Dx;
+			if(hy != INT_MAX) hy -= Dy;
+			if(hz != INT_MAX) hz -= Dz;
 		}
 		const Operand operand;
 	};

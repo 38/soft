@@ -4,16 +4,16 @@
 #include <cmath>
 namespace SpatialOps{
 	/* Definition for the math function operators */
-	DEF_SYMBOL_1ARG(sin);
-	DEF_SYMBOL_1ARG(cos);
-	DEF_SYMBOL_1ARG(tan);
-	DEF_SYMBOL_1ARG(asin);
-	DEF_SYMBOL_1ARG(acos);
-	DEF_SYMBOL_1ARG(atan);
-	DEF_SYMBOL_1ARG(abs);
-	DEF_SYMBOL_1ARG(exp);
-	DEF_SYMBOL_1ARG(log);
-	DEF_SYMBOL_1ARG(sqrt);
+	DEF_SYMBOL_1ARG(sin, false);
+	DEF_SYMBOL_1ARG(cos, false);
+	DEF_SYMBOL_1ARG(tan, false);
+	DEF_SYMBOL_1ARG(asin, false);
+	DEF_SYMBOL_1ARG(acos, false);
+	DEF_SYMBOL_1ARG(atan, false);
+	DEF_SYMBOL_1ARG(abs, false);
+	DEF_SYMBOL_1ARG(exp, false);
+	DEF_SYMBOL_1ARG(log, false);
+	DEF_SYMBOL_1ARG(sqrt, false);
 
 
 	/* Define the operators */
