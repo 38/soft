@@ -144,6 +144,9 @@ namespace GPULib{
 	GPU_SCALAR_RULE_1ARG(log, std::log((double)_1));
 	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
 
+	GPU_SCALAR_RULE_2ARGS(max, std::max((double)_1, (double)_2));
+	GPU_SCALAR_RULE_2ARGS(min, std::min((double)_1, (double)_2));
+
 }
 namespace SpatialOps{
 	/* Export the Library */

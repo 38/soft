@@ -29,3 +29,9 @@
 *.out
 *.app
 main
+
+cmake_install.cmake
+CMakeCache.txt
+bin/*
+CMakeFiles
+Makefile

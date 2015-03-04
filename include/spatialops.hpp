@@ -19,6 +19,7 @@
 #include <symbol/window.hpp>
 #include <symbol/coorinate.hpp>
 #include <symbol/basicops.hpp>
+#include <symbol/lvalue.hpp>
 
 /* define functions */
 #include <functions/math.hpp>

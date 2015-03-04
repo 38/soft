@@ -14,6 +14,8 @@ namespace SpatialOps{
 	DEF_SYMBOL_1ARG(exp, false);
 	DEF_SYMBOL_1ARG(log, false);
 	DEF_SYMBOL_1ARG(sqrt, false);
+	DEF_SYMBOL_2ARGS(max, false);
+	DEF_SYMBOL_2ARGS(min, false);
 
 
 	/* Define the operators */
@@ -27,6 +29,8 @@ namespace SpatialOps{
 	DEF_DEFAULT_OPERAND_1ARG(exp);
 	DEF_DEFAULT_OPERAND_1ARG(log);
 	DEF_DEFAULT_OPERAND_1ARG(sqrt);
+	DEF_DEFAULT_FUNCTION_2ARGS(min);
+	DEF_DEFAULT_FUNCTION_2ARGS(max);
 
 
 	/* Type inference section */
@@ -40,6 +44,8 @@ namespace SpatialOps{
 	DEF_TYPE_INFERENCE_1ARG(exp, std::exp(_1));
 	DEF_TYPE_INFERENCE_1ARG(log, std::log(_1));
 	DEF_TYPE_INFERENCE_1ARG(sqrt, std::sqrt(_1));
+	DEF_TYPE_INFERENCE_2ARGS(min, std::min(_1, _2));
+	DEF_TYPE_INFERENCE_2ARGS(max, std::max(_1, _2));
 }
 #endif
 

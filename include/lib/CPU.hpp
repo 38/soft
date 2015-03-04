@@ -90,6 +90,15 @@ namespace CPULib{
 			 (e._s.low[2] <= z && z < e._s.high[2]))?T1::eval(x, y, z, e._1):e._s.defval;
 		}
 	};
+	template <typename T, typename Executable>
+	struct Lib<LValueScalar<T>, Executable> {
+		typedef typename Executable::OP1Type::CodeType T1;
+		typedef typename ExprTypeInfer<LValueScalar<T> >::R RetType;
+		static inline RetType eval(int x, int y, int z, const Executable& e)
+		{
+			return T1::eval(0,0,0,e._1);
+		}
+	};
 
 #define CPU_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
@@ -144,6 +153,10 @@ namespace CPULib{
 	CPU_SCALAR_RULE_1ARG(exp, std::exp(_1));
 	CPU_SCALAR_RULE_1ARG(log, std::log(_1));
 	CPU_SCALAR_RULE_1ARG(sqrt, std::sqrt(_1));
+
+
+	CPU_SCALAR_RULE_2ARGS(max, std::max(_1, _2));
+	CPU_SCALAR_RULE_2ARGS(min, std::min(_1, _2));
 
 }
 namespace SpatialOps{

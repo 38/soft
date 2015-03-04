@@ -254,6 +254,16 @@ struct SymbolDestruction<false>{
 			return REFSYM(id)<left, right>(l, r);\
 		}
 
+/* define a default binary operator */
+#define DEF_DEFAULT_FUNCTION_2ARGS(id) \
+		template <typename left, typename right>\
+		static inline REFSYM(id)<left, right> id(const left& l, const right& r)\
+		{\
+			TopLevelFlag<left>::clear(l);\
+			TopLevelFlag<right>::clear(r);\
+			return REFSYM(id)<left, right>(l, r);\
+		}
+
 /* define a default uniary operator */
 #define DEF_DEFAULT_OPERAND_1ARG(id) \
 		template <typename TOperand>\

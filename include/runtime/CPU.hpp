@@ -27,6 +27,11 @@ namespace CPURuntime{
 		{
 			int lx, ly, lz, hx, hy, hz;
 			GetRange<typename Executable::Symbol>::get_range(e._s, lx, ly, lz, hx, hy, hz);
+			/* Check if this formular is trying to do an infinity loop, just do the action on 0 */
+			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
+			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
+			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
+			/* do the actual ops */ 
 			for(int x = lx; x < hx; x ++)
 				for(int y = ly; y < hy; y ++)
 					for(int z = lz; z < hz; z ++)

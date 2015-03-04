@@ -65,5 +65,14 @@ namespace SpatialOps{
 		OP1Type _1;
 		Executable(const Symbol& _symbol): _s(_symbol), _1(_s.operand){}
 	};
+	template <typename T, int DeviceId>
+	struct Executable<LValueScalar<T>, DeviceId>{
+		typedef LValueScalar<T> Symbol;
+		typedef Executable<typename Symbol::Operand, DeviceId> OP1Type;
+		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
+		const Symbol _s;
+		OP1Type _1;
+		Executable(const Symbol& _symbol): _s(_symbol), _1(_s.operand){}
+	};
 };
 #endif

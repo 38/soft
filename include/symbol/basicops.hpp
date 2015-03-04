@@ -38,6 +38,7 @@ namespace SpatialOps{
 	DEF_DEFAULT_OPERAND_2ARGS(ge, >=);
 	DEF_DEFAULT_OPERAND_2ARGS(ne, !=);
 
+
 	/* Define the real uniary operators */
 	template <typename TOperand>
 	REFSYM(neg)<TOperand> operator -(const TOperand& operand)
@@ -54,6 +55,7 @@ namespace SpatialOps{
 		typedef REFSYM(not)<TOperand> RetType;
 		return RetType(operand);
 	}
+
 
 	/* Then the type inference section */
 	DEF_TYPE_INFERENCE_2ARGS(add, _1 + _2);

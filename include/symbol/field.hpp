@@ -1,9 +1,16 @@
-#ifndef __PRIMITIVES_HPP__
-#define __PRIMITIVES_HPP__
+#ifndef __SYMBOL_FIELD_HPP__
+#define __SYMBOL_FIELD_HPP__
 #include <iostream>
 #include <stdlib.h>
 namespace SpatialOps{
-	static unsigned next_id = 0;
+	template <int _DummyType = 0>
+	struct _NextId{
+		static inline unsigned& get()
+		{
+			static unsigned next_id = 0;
+			return next_id;
+		}
+	};
 	/**
 	 * @brief the type for a spatial field
 	 * @detials This actually a field of symbol, DO NOT ALLOCATE ACTUALL MEMORY
@@ -25,7 +32,7 @@ namespace SpatialOps{
 			_low[0] = lx;
 			_low[1] = ly;
 			_low[2] = lz;
-			_identifier = (next_id++);
+			_identifier = (_NextId<>::get()++);
 			size_t size = (_high[0] - _low[0]) *
 						  (_high[1] - _low[1]) *
 						  (_high[2] - _low[2]) *
@@ -103,7 +110,7 @@ namespace SpatialOps{
 	};
 	template <typename T>
 	struct GetRange<Field<T> >{
-		static inline void get_range(const Field<T>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
+		static inline void get_range(const Field<T>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
 			e.get_range(lx, ly, lz, hx, hy, hz);
 		}
