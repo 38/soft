@@ -28,10 +28,8 @@
 *.exe
 *.out
 *.app
-main
+*/main
 
-cmake_install.cmake
-CMakeCache.txt
-bin/*
-CMakeFiles
-Makefile
+#Vimfile
+*.swp
+*.swo
