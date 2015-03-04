@@ -8,7 +8,7 @@ namespace SpatialOps{
 	 **/
 	template <int DeviceId, typename Expr>
 	inline Executable<Expr, DeviceId> link(const Expr& symbolic_expr){
-		return Executable<Expr, DeviceId>(symbolic_expr);
+		return Executable<Expr, DeviceId>(InvokeDevicePP<DeviceId, Expr>::preprocess(symbolic_expr));
 	}
 	template <template <typename ,typename> class BinSym, typename Left, typename Right, int DeviceId>
 	struct Executable<BinSym<Left, Right>, DeviceId>{
@@ -65,6 +65,11 @@ namespace SpatialOps{
 		OP1Type _1;
 		Executable(const Symbol& _symbol): _s(_symbol), _1(_s.operand){}
 	};
+	template <typename Operand, typename Annotation, int DeviceId>
+	struct Executable<symbol_annotation<Operand, Annotation>, DeviceId>: public Executable<Operand, DeviceId>{
+		/* simply do nothing */
+	};
+
 	template <typename T, int DeviceId>
 	struct Executable<LValueScalar<T>, DeviceId>{
 		typedef LValueScalar<T> Symbol;

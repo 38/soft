@@ -155,6 +155,7 @@ namespace SpatialOps{
 	{
 		typedef GPULib::Lib<Expr, Executable> R;
 	};
+	/* Define the Executor */
 	template <>
 	struct GetExecutor<DEVICE_TYPE_CUDA>
 	{
@@ -163,6 +164,19 @@ namespace SpatialOps{
 		{
 			typedef typename Executable::CodeType Code;
 			Code::eval(x, y, z, e);
+		}
+	};
+	/* Define the Preprocessor */
+	struct annotation_gpu_reduction{};
+	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the GPU Reduction symbol */
+	template <typename <typename, typename> BinOp, typename ResultT, typename SExpr>
+	struct InvokeDevicePP<DEVICE_TYPE_CUDA, REFSYM(assign)<LVScalar<ResultT>, BinOp<LVScalar<ResultT>, SExpr> > >
+	{
+		typedef REFSYM(assign)<LVScalar<ResultT>, BinOp<LVScalar<ResultT>, SExpr> > AssignmentExpr;
+		typedef symbol_annotation<AssignmentExpr, annotation_gpu_reduction> Annotated;
+		static inline const Annotated& preprocess(const AssignmentExpr& e)
+		{
+			return Annotated(e);
 		}
 	};
 }

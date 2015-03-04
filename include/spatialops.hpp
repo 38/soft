@@ -11,6 +11,9 @@
 /* device management */
 #include <util/device_manager.hpp>
 
+/* memory management */
+#include <util/memory_manager.hpp>
+
 /* symbol definitions */
 #include <symbol/interface.hpp>
 #include <symbol/field.hpp>
@@ -20,6 +23,7 @@
 #include <symbol/coorinate.hpp>
 #include <symbol/basicops.hpp>
 #include <symbol/lvalue.hpp>
+#include <symbol/annotation.hpp>
 
 /* define functions */
 #include <functions/math.hpp>
