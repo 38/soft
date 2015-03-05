@@ -108,8 +108,8 @@ namespace SpatialOps{
 			int _low[3];   /**!< the low bound of the field **/
 			unsigned _identifier; /**!< the unique identifier of this field */
 	};
-	template <typename T>
-	struct GetRange<Field<T> >{
+	template <typename T, typename Env = EmptyEnv>
+	struct GetRange<Field<T>, Env >{
 		static inline void get_range(const Field<T>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
 			e.get_range(lx, ly, lz, hx, hy, hz);
@@ -118,8 +118,8 @@ namespace SpatialOps{
 	/* # of operand is 0, just use default */
 
 	/* Type inference class */
-	template <typename T>
-	struct ExprTypeInfer<Field<T> >{
+	template <typename T, typename Env = EmptyEnv>
+	struct ExprTypeInfer<Field<T>, EmptyEnv>{
 		typedef T& R;
 	};
 };

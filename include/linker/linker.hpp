@@ -1,4 +1,5 @@
 #ifndef __LINKER_HPP__
+
 namespace SpatialOps{
 	/* Link the code with the Library */
 	template <typename Expr, int DeviceId> struct Executable;
