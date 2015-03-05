@@ -57,7 +57,7 @@ namespace SpatialOps{
 	/**
 	 * @brief Infer the type of an symbolic expression
 	 **/
-	template <class Expr, typename Env>
+	template <class Expr>
 	struct ExprTypeInfer{
 		typedef Expr R;
 	};
@@ -265,19 +265,19 @@ struct SymbolDestruction<false>{
 		}
 /* Define a type-inference rule for a binary operator */
 #define DEF_TYPE_INFERENCE_2ARGS(id, infer_expr)\
-	template<typename left, typename right, typename Env>\
-	struct ExprTypeInfer<REFSYM(id)<left, right>, Env >{\
-		typedef typename ExprTypeInfer<left, Env>::R LeftType;\
-		typedef typename ExprTypeInfer<right, Env>::R RightType;\
+	template<typename left, typename right>\
+	struct ExprTypeInfer<REFSYM(id)<left, right> >{\
+		typedef typename ExprTypeInfer<left>::R LeftType;\
+		typedef typename ExprTypeInfer<right>::R RightType;\
 		static LeftType &_1;\
 		static RightType &_2;\
 		typedef typeof(infer_expr) R;\
 	}
 /* Define a type-inference rule for a uniary operator */
 #define DEF_TYPE_INFERENCE_1ARG(id, infer_expr)\
-	template<typename TOperand, typename Env>\
-	struct ExprTypeInfer<REFSYM(id)<TOperand>, Env>{\
-		typedef typename ExprTypeInfer<TOperand, Env>::R OperType;\
+	template<typename TOperand>\
+	struct ExprTypeInfer<REFSYM(id)<TOperand> >{\
+		typedef typename ExprTypeInfer<TOperand>::R OperType;\
 		static OperType &_1;\
 		typedef typeof(infer_expr) R;\
 	}

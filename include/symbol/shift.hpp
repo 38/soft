@@ -58,14 +58,14 @@ namespace SpatialOps{
 	};
 	/* define the shift operator */
 	template<int dx ,int dy, int dz, typename operand>
-	symbol_shift<operand, dx, dy, dz> shift(const operand& what)
+	static inline symbol_shift<operand, dx, dy, dz> shift(const operand& what)
 	{
 		TopLevelFlag<operand>::clear(what);
 		return symbol_shift<operand, dx, dy, dz>(what);
 	}
-	template <typename operand, int x, int y, int z, typename Env>
-	struct ExprTypeInfer<symbol_shift<operand, x, y, z>, Env>{
-		typedef typename ExprTypeInfer<operand, Env>::R R;
+	template <typename operand, int x, int y, int z>
+	struct ExprTypeInfer<symbol_shift<operand, x, y, z> >{
+		typedef typename ExprTypeInfer<operand>::R R;
 	};
 }
 #endif /* __SHIFT_HPP__ */

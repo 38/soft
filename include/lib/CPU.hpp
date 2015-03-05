@@ -97,6 +97,27 @@ namespace CPULib{
 		}
 	};
 
+	template <typename Var, typename Op1, typename Op2, typename Executable>
+	struct Lib<REFSYM(binding)<Var, Op1, Op2>, Executable>{
+		typedef typename Executable::OP2Type::CodeType T2;
+		typedef typename ExprTypeInfer<Op2>::R RetType;
+		static inline RetType eval(int x, int y, int z, const Executable& e)
+		{
+			return T2::eval(x,y,z,e._2);
+		}
+	};
+
+	template <typename Var, typename Executable>
+	struct Lib<REFSYM(ref)<Var>, Executable>{
+		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
+		static inline RetType eval(int x, int y, int z, const Executable& e)
+		{
+			typename Executable::Target* target = (typename Executable::Target*)(((char*)&e) + (int)Executable::Offset);
+			printf("%p\n", target);
+			return Executable::Target::CodeType::eval(x,y,z, *target);
+		}
+	};
+
 #define CPU_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
 	struct ScalarLib<REFSYM(sym)<left, right> >{\

@@ -71,7 +71,7 @@ namespace SpatialOps{
 	{
 		Print<Expr> writer(expr);
 		int lx, ly, lz, hx, hy, hz;
-		GetRange<Expr>::get_range(expr, lx, ly, lz, hx, hy, hz);
+		GetRange<Expr, EmptyEnv>::get_range(expr, lx, ly, lz, hx, hy, hz);
 		printf("\n[from (%d, %d, %d) to (%d, %d, %d)] type=%s\n", lx, ly, lz, hx, hy, hz, typeid(typename ExprTypeInfer<Expr>::R).name());
 	}
 };

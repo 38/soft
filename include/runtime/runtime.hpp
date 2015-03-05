@@ -23,11 +23,11 @@ namespace SpatialOps{
 			return DataValidator<DevId, typename Executable::OP1Type, GetNumOperands<typename Executable::Symbol::Operand>::R>::validate(e._1, s.operand);
 		}
 	};
-	template <int DeviceId, typename T>
-	struct DataValidator<DeviceId, Executable<Field<T>, DeviceId>, 0>{
-		static inline bool validate(const Executable<Field<T>, DeviceId>& e, const Field<T>& s)
+	template <int DeviceId, typename T, typename Env, int offset>
+	struct DataValidator<DeviceId, Executable<Field<T>, DeviceId, Env, offset>, 0>{
+		static inline bool validate(const Executable<Field<T>, DeviceId, Env, offset>& e, const Field<T>& s)
 		{
-			return (NULL != (((Executable<Field<T>, DeviceId>*)&e)->_m = s.template get_memory<DeviceId>()));
+			return (NULL != (((Executable<Field<T>, DeviceId, Env, offset>*)&e)->_m = s.template get_memory<DeviceId>()));
 		}
 	};
 	template <int DevId, typename Executable>

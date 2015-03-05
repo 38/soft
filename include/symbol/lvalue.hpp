@@ -13,7 +13,7 @@ namespace SpatialOps{
 			return "LValueScalar";
 		}		
 	};
-	template <typename T, typename Env>
+	template <typename T>
 	struct GetNumOperands<LValueScalar<T> >{
 		enum{
 			R = 1
@@ -27,8 +27,8 @@ namespace SpatialOps{
 			hx = hy = hz = INT_MAX;
 		}
 	};
-	template <typename T, typename Env>
-	struct ExprTypeInfer<LValueScalar<T>, Env>{
+	template <typename T>
+	struct ExprTypeInfer<LValueScalar<T> >{
 		typedef T& R;
 	};
 }

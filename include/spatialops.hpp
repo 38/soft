@@ -27,6 +27,7 @@
 #include <symbol/basicops.hpp>
 #include <symbol/lvalue.hpp>
 #include <symbol/annotation.hpp>
+#include <symbol/let.hpp>
 
 /* define functions */
 #include <functions/math.hpp>

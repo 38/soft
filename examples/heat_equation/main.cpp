@@ -8,12 +8,16 @@ const double sqrdDeltaY = deltaY * deltaY;
 const double sqrdDeltaXYmult = sqrdDeltaX * sqrdDeltaY;
 const double sqrdDeltaXYplus = sqrdDeltaX + sqrdDeltaY;
 
+struct X{typedef double T;};
+struct Y{typedef double T;};
 int main()
 {
 	Field<double> phi(-1,-1,0,7,7,1);
 	Field<double> rhs(-1,-1,0,7,7,1);
 	Field<double> alpha(-1,-1,0,7,7,1);
 	
+
+
 	alpha <<= 1;
 
 	/* Reduction */
@@ -32,8 +36,9 @@ int main()
 	for(int i = 0; i < nSteps; i ++)
 	{
 		
-		rhs <<= DivR<XDir>( Interp<XDir>(alpha) * Div<XDir>(phi) * 6.0) * 6.0 +
-				DivR<YDir>( Interp<YDir>(alpha) * Div<YDir>(phi) * 6.0) * 6.0;
+		rhs <<= let<X>(alpha,let<Y>(phi,
+				(DivR<XDir>( Interp<XDir>(ref<X>()) * Div<XDir>(ref<Y>())) +
+				 DivR<YDir>( Interp<YDir>(ref<X>()) * Div<YDir>(ref<Y>()))) * 36.0));
 		phi <<= phi + deltaT * rhs;
 		
 		phi <<= window(5.0, 0.0, -1, -1, 0, 

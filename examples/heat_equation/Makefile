@@ -1,4 +1,4 @@
-CXX=clang++-3.6
+CXX=g++
 CXXFLAGS=-g
 LIBDIR=../..
 TARGET=heat_equation

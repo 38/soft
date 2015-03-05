@@ -118,8 +118,8 @@ namespace SpatialOps{
 	/* # of operand is 0, just use default */
 
 	/* Type inference class */
-	template <typename T, typename Env>
-	struct ExprTypeInfer<Field<T>, Env>{
+	template <typename T >
+	struct ExprTypeInfer<Field<T> >{
 		typedef T& R;
 	};
 };
