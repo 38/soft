@@ -19,8 +19,8 @@ namespace SpatialOps{
 		return symbol_coordinate<Dir>();
 	}
 	/* The coordinate operator always return a interger value */
-	template<typename Dir, typename Env = EmptryEnv>
-	struct ExprTypeInfer<symbol_coordinate<Dir> >{
+	template<typename Dir, typename Env>
+	struct ExprTypeInfer<symbol_coordinate<Dir>, Env>{
 		typedef int R;
 	};
 }

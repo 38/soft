@@ -34,13 +34,13 @@ namespace SpatialOps{
 			hx = high[0], hy = high[1], hz = high[2];
 		}
 	};
-	template <typename operand>
+	template <typename operand, typename Env>
 	struct GetNumOperands<symbol_window<operand> >{
 		enum{
 			R = 1 
 		};
 	};
-	template <typename operand>
+	template <typename operand, typename Env>
 	struct GetRange<symbol_window<operand> >{
 		static void get_range(const symbol_window<operand>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
@@ -69,9 +69,9 @@ namespace SpatialOps{
 		return symbol_window<operand>(what, lx, ly, lz, hx, hy, hz, val);
 	}
 	
-	template <typename operand>
-	struct ExprTypeInfer<symbol_window<operand> >{
-		typedef typename ExprTypeInfer<operand>::R R; 
+	template <typename operand, typename Env>
+	struct ExprTypeInfer<symbol_window<operand>, Env>{
+		typedef typename ExprTypeInfer<operand, Env>::R R; 
 	};
 }
 #endif /*__WINDOW_HPP__*/

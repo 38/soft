@@ -12,14 +12,14 @@ namespace SpatialOps{
 		}
 	};
 	
-	template <typename operand, typename annotation>
+	template <typename operand, typename annotation, typename Env>
 	struct GetNumOperands<symbol_annotation<operand, annotation> >{
 		enum{
 			R = GetNumOperands<operand>::R
 		};
 	};
-	template <typename operand, typename annotation, typename Env = EmptyEnv>
-	struct GetRange<symbol_annotation<operand, annotation> >{
+	template <typename operand, typename annotation, typename Env>
+	struct GetRange<symbol_annotation<operand, annotation>, Env >{
 		static void get_range(const symbol_annotation<operand, annotation>& e, int& lx, int& ly, int&lz, int& hx, int& hy, int& hz)
 		{
 			typedef GetRange<operand, Env> RangeFinder;
@@ -37,8 +37,8 @@ namespace SpatialOps{
 			((symbol_annotation<operand,annotation>*)&e)->top_level = 0;
 		}
 	};
-	template <typename operand, typename annotation, typename Env = EmptyEnv>
-	struct ExprTypeInfer<symbol_annotation<operand, annotation>, EmptyEnv>{
+	template <typename operand, typename annotation, typename Env>
+	struct ExprTypeInfer<symbol_annotation<operand, annotation>, Env>{
 		typedef typename ExprTypeInfer<operand, Env>::R R;
 	};
 	/* internal use only, We do not provide a interface to user to access this symbol */

@@ -14,6 +14,9 @@
 /* memory management */
 #include <util/memory_manager.hpp>
 
+/* environ uitls */
+#include <util/environ.hpp>
+
 /* symbol definitions */
 #include <symbol/interface.hpp>
 #include <symbol/field.hpp>

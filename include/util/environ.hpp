@@ -3,7 +3,7 @@
 namespace SpatialOps{
 	/** Environ */
 	struct EmptyEnv{
-		typename int Id;
+		typedef int Id;
 	};
 	template <typename IdType, typename Expr, typename Rem>
 	struct AppendEnv{
@@ -14,7 +14,7 @@ namespace SpatialOps{
 	template <typename Id, typename Env> struct GetEnv;
 	template <typename TargetId, typename CurrentId, typename Env>
 	struct _GetEnvImpl{
-		typedef typename GetEnv<TargetId, typename Env::Next::Id, typename Env::Next>::R R;
+		typedef typename _GetEnvImpl<TargetId, typename Env::Next::Id, typename Env::Next>::R R;
 	};
 	template <typename TargetId>
 	struct _GetEnvImpl<TargetId, int, EmptyEnv>{

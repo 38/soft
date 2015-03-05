@@ -17,10 +17,11 @@ namespace SpatialOps{
 			snprintf(_buf, 100, "Shift<%d, %d, %d>", Dx, Dy,Dz);
 			return _buf;
 		}
+		template <typename Env>
 		inline void get_range(int& lx, int& ly, int&lz,
 							  int& hx, int& hy, int&hz) const
 		{
-			typedef GetRange<Operand> RangeFinder;
+			typedef GetRange<Operand, Env> RangeFinder;
 			RangeFinder::get_range(operand, lx, ly, lz, hx, hy, hz);
 			if(lx != INT_MIN) lx -= Dx;
 			if(ly != INT_MIN) ly -= Dy;
@@ -37,11 +38,11 @@ namespace SpatialOps{
 			R = 1 
 		};
 	};
-	template <typename operand, int x, int y, int z>
-	struct GetRange<symbol_shift<operand, x, y, z> >{
+	template <typename operand, int x, int y, int z, typename Env>
+	struct GetRange<symbol_shift<operand, x, y, z>, Env>{
 		static void get_range(const symbol_shift<operand, x,y,z>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
-			e.get_range(lx, ly, lz, hx, hy, hz);
+			e.template get_range<Env>(lx, ly, lz, hx, hy, hz);
 		}
 	};
 	template <typename operand, int x, int y, int z>
@@ -62,9 +63,9 @@ namespace SpatialOps{
 		TopLevelFlag<operand>::clear(what);
 		return symbol_shift<operand, dx, dy, dz>(what);
 	}
-	template <typename operand, int x, int y, int z>
-	struct ExprTypeInfer<symbol_shift<operand, x, y, z> >{
-		typedef typename ExprTypeInfer<operand>::R R;
+	template <typename operand, int x, int y, int z, typename Env>
+	struct ExprTypeInfer<symbol_shift<operand, x, y, z>, Env>{
+		typedef typename ExprTypeInfer<operand, Env>::R R;
 	};
 }
 #endif /* __SHIFT_HPP__ */

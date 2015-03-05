@@ -23,7 +23,7 @@ namespace SpatialOps{
 	 * @param Operator the operator that we what to query
 	 * @note  New operator that with non-zero operands should be specialized
 	 **/
-	template <typename Operator, typename Envrion = EmptyEnv>
+	template <typename Operator>
 	struct GetNumOperands{
 		enum{
 			R = 0   /* 0 by Default */
@@ -38,7 +38,7 @@ namespace SpatialOps{
 	 * @param Expr the expression to query
 	 * @note  Operator that with finte range should rewrite this
 	 **/
-	template <typename Expr, typename Environ = EmptyEnv>
+	template <typename Expr, typename Env>
 	struct GetRange{
 		static inline void get_range(const Expr& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
 		{
@@ -57,7 +57,7 @@ namespace SpatialOps{
 	/**
 	 * @brief Infer the type of an symbolic expression
 	 **/
-	template <class Expr, typename Environ = EmptyEnv>
+	template <class Expr, typename Env>
 	struct ExprTypeInfer{
 		typedef Expr R;
 	};
@@ -153,25 +153,20 @@ struct SymbolDestruction<false>{
 				if(top_level)\
 					SymbolDestruction<runnable>::template invoke<symbol_##id>(*this);\
 			}\
-			inline void get_range(int& lx, int& ly, int&lz,\
-								  int& hx, int& hy, int&hz) const\
-			{\
-				typedef GetRange<op> RangeFinder;\
-				RangeFinder::get_range(operand, lx, ly, lz, hx, hy, hz);\
-			}\
 			const op operand; \
 		};\
-		template <typename op, typename Env = EmptyEnv>\
-		struct GetNumOperands<symbol_##id<op>, Env>{\
+		template <typename op>\
+		struct GetNumOperands<symbol_##id<op> >{\
 			enum{\
 				R = 1 \
 			};\
 		};\
-		template <typename op, typename Env = EmptyEnv>\
+		template <typename op, typename Env>\
 		struct GetRange<symbol_##id<op>, Env>{\
 			static void get_range(const symbol_##id<op>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
 			{\
-				e.get_range(lx, ly, lz, hx, hy, hz);\
+				typedef GetRange<op, Env> RangeFinder;\
+				RangeFinder::get_range(e.operand, lx, ly, lz, hx, hy, hz);\
 			}\
 		};\
 		template <typename op>\
@@ -198,35 +193,30 @@ struct SymbolDestruction<false>{
 				if(top_level)\
 					SymbolDestruction<runnable>::template invoke<symbol_##id>(*this);\
 			}\
-			inline void get_range(int& lx, int& ly, int&lz,\
-								  int& hx, int& hy, int&hz) const\
+			const left operand_l;\
+			const right operand_r;\
+		};\
+		template <typename left, typename right>\
+		struct GetNumOperands<symbol_##id<left, right> >{\
+			enum{\
+				R = 2 \
+			};\
+		};\
+		template <typename left, typename right, typename Env>\
+		struct GetRange<symbol_##id<left, right>, Env>{\
+			static void get_range(const symbol_##id<left, right>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
 			{\
-				typedef GetRange<left> RangeFinderLeft;\
-				typedef GetRange<right> RangeFinderRight;\
+				typedef GetRange<left, Env> RangeFinderLeft;\
+				typedef GetRange<right, Env> RangeFinderRight;\
 				int tlx, tly, tlz, thx, thy, thz;\
-				RangeFinderLeft::get_range(operand_l, lx, ly, lz, hx, hy, hz);\
-				RangeFinderRight::get_range(operand_r, tlx, tly, tlz, thx, thy, thz);\
+				RangeFinderLeft::get_range(e.operand_l, lx, ly, lz, hx, hy, hz);\
+				RangeFinderRight::get_range(e.operand_r, tlx, tly, tlz, thx, thy, thz);\
 				if(lx < tlx) lx = tlx;\
 				if(ly < tly) ly = tly;\
 				if(lz < tlz) lz = tlz;\
 				if(hx > thx) hx = thx;\
 				if(hy > thy) hy = thy;\
 				if(hz > thz) hz = thz;\
-			}\
-			const left operand_l;\
-			const right operand_r;\
-		};\
-		template <typename left, typename right, typename Env = EmptyEnv>\
-		struct GetNumOperands<symbol_##id<left, right>, Env >{\
-			enum{\
-				R = 2 \
-			};\
-		};\
-		template <typename left, typename right, typename Env = EmptyEnv>\
-		struct GetRange<symbol_##id<left, right> >{\
-			static void get_range(const symbol_##id<left, right>& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)\
-			{\
-				e.get_range(lx, ly, lz, hx, hy, hz);\
 			}\
 		};\
 		template <typename left, typename right>\
@@ -275,19 +265,19 @@ struct SymbolDestruction<false>{
 		}
 /* Define a type-inference rule for a binary operator */
 #define DEF_TYPE_INFERENCE_2ARGS(id, infer_expr)\
-	template<typename left, typename right, typename Env = EmptyEnv>\
+	template<typename left, typename right, typename Env>\
 	struct ExprTypeInfer<REFSYM(id)<left, right>, Env >{\
-		typedef typename ExprTypeInfer<left>::R LeftType;\
-		typedef typename ExprTypeInfer<right>::R RightType;\
+		typedef typename ExprTypeInfer<left, Env>::R LeftType;\
+		typedef typename ExprTypeInfer<right, Env>::R RightType;\
 		static LeftType &_1;\
 		static RightType &_2;\
 		typedef typeof(infer_expr) R;\
 	}
 /* Define a type-inference rule for a uniary operator */
 #define DEF_TYPE_INFERENCE_1ARG(id, infer_expr)\
-	template<typename TOperand>\
-	struct ExprTypeInfer<REFSYM(id)<TOperand>, typename Env = EmptyEnv>{\
-		typedef typename ExprTypeInfer<TOperand>::R OperType;\
+	template<typename TOperand, typename Env>\
+	struct ExprTypeInfer<REFSYM(id)<TOperand>, Env>{\
+		typedef typename ExprTypeInfer<TOperand, Env>::R OperType;\
 		static OperType &_1;\
 		typedef typeof(infer_expr) R;\
 	}

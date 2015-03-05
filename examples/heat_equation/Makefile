@@ -1,4 +1,4 @@
-#CXX=nvcc
+CXX=clang++-3.6
 CXXFLAGS=-g
 LIBDIR=../..
 TARGET=heat_equation
