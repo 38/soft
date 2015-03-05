@@ -78,6 +78,8 @@ namespace SpatialOps{
 	template <typename Operand, typename Annotation, int DeviceId>
 	struct Executable<symbol_annotation<Operand, Annotation>, DeviceId>: public Executable<Operand, DeviceId>{
 		/* simply do nothing */
+		typedef symbol_annotation<Operand, Annotation> Symbol;
+		Executable(const Symbol& _symbol): Executable<Operand, DeviceId>(_symbol){}
 	};
 
 	template <typename T, int DeviceId>

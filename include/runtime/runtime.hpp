@@ -40,6 +40,8 @@ namespace SpatialOps{
 		static inline bool execute_symexpr(const SymExpr& expr){
 			typedef typeof(link<DevId>(expr)) Exec;
 			Exec e = link<DevId>(expr);
+
+			printf("%zu\n", sizeof(e));
 			
 			if(!data_validate<DevId>(e, expr) || !GetDeviceRuntimeEnv<DevId>::R::execute(e, expr)) 
 				return SymExprExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);

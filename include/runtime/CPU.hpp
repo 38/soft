@@ -22,9 +22,16 @@ namespace CPURuntime{
 		}
 		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) {}
 		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
+
+		template <typename Executable> struct AnnotationHandler{
+			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){}
+		};
 		template <typename Executable>
 		static bool execute(const Executable& e, const typename Executable::Symbol& s)
 		{
+			/* you can add annotation handler here 
+			 * AnnotationHandler<typename Executable::Symbol>::run(e, s);
+			 */
 			int lx, ly, lz, hx, hy, hz;
 			GetRange<typename Executable::Symbol>::get_range(s, lx, ly, lz, hx, hy, hz);
 			/* Check if this formular is trying to do an infinity loop, just do the action on 0 */

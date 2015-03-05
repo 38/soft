@@ -11,18 +11,19 @@ namespace SpatialOps{
 			return "Annotation";
 		}
 	};
+	
 	template <typename operand, typename annotation>
 	struct GetNumOperands<symbol_annotation<operand, annotation> >{
 		enum{
-			R = 1
+			R = GetNumOperands<operand>::R
 		};
 	};
 	template <typename operand, typename annotation>
 	struct GetRange<symbol_annotation<operand, annotation> >{
 		static void get_range(const symbol_annotation<operand, annotation>& e, int& lx, int& ly, int&lz, int& hx, int& hy, int& hz)
 		{
-			typedef typename GetRange<operand>::R RangeFinder;
-			RangeFinder::get_range(e.operand,lx, ly, lz, hx, hy, hz);
+			typedef GetRange<operand> RangeFinder;
+			RangeFinder::get_range(e,lx, ly, lz, hx, hy, hz);
 		}
 	};
 	template <typename operand, typename annotation>
