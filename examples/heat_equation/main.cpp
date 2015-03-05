@@ -14,7 +14,6 @@ int main()
 	Field<double> rhs(-1,-1,0,7,7,1);
 	Field<double> alpha(-1,-1,0,7,7,1);
 	
-	
 	alpha <<= 1;
 
 	/* Reduction */

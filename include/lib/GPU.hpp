@@ -82,9 +82,18 @@ namespace GPULib{
 		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
 		{
 			return 
-			((e._s.low[0] <= x && x < e._s.high[0]) &&
-			 (e._s.low[1] <= y && y < e._s.high[1]) &&
-			 (e._s.low[2] <= z && z < e._s.high[2]))?T1::eval(x, y, z, e._1):e._s.defval;
+			((e.lx <= x && x < e.hx) &&
+			 (e.ly <= y && y < e.hy) &&
+			 (e.lz <= z && z < e.hz))?T1::eval(x, y, z, e._1):e.defval;
+		}
+	};
+	template <typename T, typename Executable>
+	struct Lib<LValueScalar<T>, Executable> {
+		typedef typename Executable::OP1Type::CodeType T1;
+		typedef typename ExprTypeInfer<LValueScalar<T> >::R RetType;
+		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		{
+			return T1::eval(0,0,0,e._1);
 		}
 	};
 
@@ -144,8 +153,8 @@ namespace GPULib{
 	GPU_SCALAR_RULE_1ARG(log, std::log((double)_1));
 	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
 
-	GPU_SCALAR_RULE_2ARGS(max, std::max((double)_1, (double)_2));
-	GPU_SCALAR_RULE_2ARGS(min, std::min((double)_1, (double)_2));
+	GPU_SCALAR_RULE_2ARGS(max, (_1 > _2)?_1:_2);
+	GPU_SCALAR_RULE_2ARGS(min, (_1 < _2)?_1:_2);
 
 }
 namespace SpatialOps{
@@ -169,12 +178,12 @@ namespace SpatialOps{
 	/* Define the Preprocessor */
 	struct annotation_gpu_reduction{};
 	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the GPU Reduction symbol */
-	template <typename <typename, typename> BinOp, typename ResultT, typename SExpr>
-	struct InvokeDevicePP<DEVICE_TYPE_CUDA, REFSYM(assign)<LVScalar<ResultT>, BinOp<LVScalar<ResultT>, SExpr> > >
+	template <template <typename, typename> class BinOp, typename ResultT, typename SExpr>
+	struct InvokeDevicePP<DEVICE_TYPE_CUDA, REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT> , SExpr> > >
 	{
-		typedef REFSYM(assign)<LVScalar<ResultT>, BinOp<LVScalar<ResultT>, SExpr> > AssignmentExpr;
+		typedef REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT>, SExpr> > AssignmentExpr;
 		typedef symbol_annotation<AssignmentExpr, annotation_gpu_reduction> Annotated;
-		static inline const Annotated& preprocess(const AssignmentExpr& e)
+		static inline Annotated preprocess(const AssignmentExpr& e)
 		{
 			return Annotated(e);
 		}

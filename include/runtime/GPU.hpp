@@ -43,10 +43,10 @@ namespace GPURuntime{
 			return (a + b - 1) / b;
 		}
 		template <typename Executable>
-		static bool execute(const Executable& e)
+		static bool execute(const Executable& e, const typename Executable::Symbol s)
 		{
 			int lx, ly, lz, hx, hy, hz;
-			GetRange<typename Executable::Symbol>::get_range(e._s, lx, ly, lz, hx, hy, hz);
+			GetRange<typename Executable::Symbol>::get_range(s, lx, ly, lz, hx, hy, hz);
 			/* avoid inf-loop */
 			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
@@ -55,6 +55,7 @@ namespace GPURuntime{
 			dim3 grid_dim( ceil(hx - lx, 8),
 					       ceil(hy - ly, 8),
 						   ceil(hz - lz, 8));
+
 
 			execute_kernel<<<block_dim, grid_dim>>>(e, lx, ly, lz, hx, hy, hz);
 			return true;

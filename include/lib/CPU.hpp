@@ -47,10 +47,7 @@ namespace CPULib{
 		typedef T& RetType;
 		static inline RetType eval(int x, int y, int z, const Executable& e)
 		{
-			const Field<T>& f = e._s;
-			int lx, ly, lz, hx, hy, hz;
-			f.get_range(lx, ly, lz, hx, hy, hz);
-			return e._m[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)];
+			return e._m[(x - e.lx) + (y - e.ly) * (e.hx - e.lx) + (z - e.lz) * (e.hx - e.lx) * (e.hy - e.ly)];
 		}
 	};
 
@@ -85,9 +82,9 @@ namespace CPULib{
 		static inline RetType eval(int x, int y, int z, const Executable& e)
 		{
 			return 
-			((e._s.low[0] <= x && x < e._s.high[0]) &&
-			 (e._s.low[1] <= y && y < e._s.high[1]) &&
-			 (e._s.low[2] <= z && z < e._s.high[2]))?T1::eval(x, y, z, e._1):e._s.defval;
+			((e.lx <= x && x < e.hx) &&
+			 (e.ly <= y && y < e.hy) &&
+			 (e.lz <= z && z < e.hz))?T1::eval(x, y, z, e._1):e.defval;
 		}
 	};
 	template <typename T, typename Executable>

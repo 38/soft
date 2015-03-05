@@ -23,10 +23,10 @@ namespace CPURuntime{
 		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) {}
 		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
 		template <typename Executable>
-		static bool execute(const Executable& e)
+		static bool execute(const Executable& e, const typename Executable::Symbol& s)
 		{
 			int lx, ly, lz, hx, hy, hz;
-			GetRange<typename Executable::Symbol>::get_range(e._s, lx, ly, lz, hx, hy, hz);
+			GetRange<typename Executable::Symbol>::get_range(s, lx, ly, lz, hx, hy, hz);
 			/* Check if this formular is trying to do an infinity loop, just do the action on 0 */
 			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
