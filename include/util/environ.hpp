@@ -2,7 +2,6 @@
 #define __UTIL_ENVIRON_HPP__
 #include <stdlib.h>
 namespace SpatialOps{
-	/** Environ */
 	struct EmptyEnv{
 		typedef int Id;
 	};

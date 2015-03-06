@@ -88,7 +88,7 @@ namespace SpatialOps{
 	 **/
 	template <int DevId, typename SymExpr> struct SymExprExecutor;
 	template <class Expr> 
-	static inline void run(Expr expr)
+	static inline void run(const Expr& expr)
 	{
 		TopLevelFlag<Expr>::clear(expr);
 		if(!SymExprExecutor<0, Expr>::execute_symexpr(expr))

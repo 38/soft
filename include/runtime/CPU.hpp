@@ -26,8 +26,8 @@ namespace CPURuntime{
 		template <typename Executable> struct AnnotationHandler{
 			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){}
 		};
-		template <typename Executable>
-		static bool execute(const Executable& e, const typename Executable::Symbol& s)
+		template <typename Executable, typename Param>
+		static bool execute(const Param& e, const typename Executable::Symbol& s)
 		{
 			/* you can add annotation handler here 
 			 * AnnotationHandler<typename Executable::Symbol>::run(e, s);
@@ -42,7 +42,7 @@ namespace CPURuntime{
 			for(int x = lx; x < hx; x ++)
 				for(int y = ly; y < hy; y ++)
 					for(int z = lz; z < hz; z ++)
-						GetExecutor<DEVICE_TYPE_CPU>::execute(x, y, z, e);
+						GetExecutor<DEVICE_TYPE_CPU>::template execute<Executable>(x, y, z, e);
 			return true;
 		}
 	};

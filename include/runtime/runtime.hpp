@@ -3,47 +3,56 @@
 namespace SpatialOps{
 	template <int DevId, typename Executable, int NumExpr>
 	struct DataValidator{
-		static inline bool validate(const Executable& e ,const typename Executable::Symbol& s)
+		static inline bool validate(const void* e ,const typename Executable::Symbol& s)
 		{
 			return true;
 		}
 	};
 	template <int DevId, typename Executable>
 	struct DataValidator<DevId, Executable, 2>{
-		static inline bool validate(const Executable& e, const typename Executable::Symbol& s)
+		static inline bool validate(void* e, const typename Executable::Symbol& s)
 		{
-			return DataValidator<DevId, typename Executable::OP1Type, GetNumOperands<typename Executable::Symbol::Operand_l>::R>::validate(e._1, s.operand_l) &&
-			       DataValidator<DevId, typename Executable::OP2Type, GetNumOperands<typename Executable::Symbol::Operand_r>::R>::validate(e._2, s.operand_r);
+			return DataValidator<DevId, 
+			                     typename Executable::OP1Type, 
+								 GetNumOperands<typename Executable::Symbol::Operand_l>::R
+								>::validate(((char*)e) + (int)Executable::_1, s.operand_l) &&
+			       DataValidator<DevId, 
+				                 typename Executable::OP2Type, 
+			                     GetNumOperands<typename Executable::Symbol::Operand_r>::R
+			                    >::validate(((char*)e) + (int)Executable::_2, s.operand_r);
 		}
 	};
 	template <int DevId, typename Executable>
 	struct DataValidator<DevId, Executable, 1>{
-		static inline bool validate(const Executable& e, const typename Executable::Symbol& s)
+		static inline bool validate(void* e, const typename Executable::Symbol& s)
 		{
-			return DataValidator<DevId, typename Executable::OP1Type, GetNumOperands<typename Executable::Symbol::Operand>::R>::validate(e._1, s.operand);
+			return DataValidator<DevId, 
+			                     typename Executable::OP1Type, 
+			                     GetNumOperands<typename Executable::Symbol::Operand>::R
+			                    >::validate(((char*)e) + (int)Executable::_1, s.operand);
 		}
 	};
 	template <int DeviceId, typename T, typename Env, int offset>
 	struct DataValidator<DeviceId, Executable<Field<T>, DeviceId, Env, offset>, 0>{
-		static inline bool validate(const Executable<Field<T>, DeviceId, Env, offset>& e, const Field<T>& s)
+		static inline bool validate(void* e, const Field<T>& s)
 		{
-			return (NULL != (((Executable<Field<T>, DeviceId, Env, offset>*)&e)->_m = s.template get_memory<DeviceId>()));
+			return ((typename Executable<Field<T>, DeviceId, Env, offset>::Self*)e)->_m = s.template get_memory<DeviceId>();
 		}
 	};
 	template <int DevId, typename Executable>
-	static inline bool data_validate(const Executable& e, const typename Executable::Symbol& s)
+	static inline bool data_validate(void* e, const typename Executable::Symbol& s)
 	{
 		return DataValidator<DevId, Executable, GetNumOperands<typename Executable::Symbol>::R>::validate(e, s);
 	}
 	template <int DevId, typename SymExpr>
 	struct SymExprExecutor{
 		static inline bool execute_symexpr(const SymExpr& expr){
-			typedef typeof(link<DevId>(expr)) Exec;
-			Exec e = link<DevId>(expr);
-
-			printf("%zu\n", sizeof(e));
-			
-			if(!data_validate<DevId>(e, expr) || !GetDeviceRuntimeEnv<DevId>::R::execute(e, expr)) 
+			//typedef typeof(link<DevId>(expr)) Exec;
+			typedef Linker<DevId, SymExpr> LinkerType;
+			typedef typename LinkerType::Exec Exec;
+			typename LinkerType::CodeType e;
+			LinkerType::link(expr, e);
+			if(!data_validate<DevId, Exec>((void*)e, expr) || !GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr)) 
 				return SymExprExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);
 			return true;
 		}
