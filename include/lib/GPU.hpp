@@ -8,14 +8,22 @@ namespace GPULib{
 	/* This Lib actuall generates the code */
 	template <typename Symbol>
 	struct ScalarLib;
+	
+	/* Get parameters */
+	template <typename Executable>
+	__device__ static inline const void* get_operand_1(const void* mem){return (char*)mem + (int)Executable::_1;}
+	template <typename Executable>
+	__device__ static inline const void* get_operand_2(const void* mem){return (char*)mem + (int)Executable::_2;}
+	template <typename Executable>
+	__device__ static inline const typename Executable::Self& get_self(const void* mem){return *(typename Executable::Self*)((char*)mem + (int)Executable::_self);}
 
 	/* The glue */
 	template <typename Expr, typename Executable> 
 	struct Lib
 	{
-		__device__ static inline Expr eval(int x, int y, int z, const Executable& e)
+		__device__ static inline Expr eval(int x, int y, int z, const void* e)
 		{
-			return e._s;
+			return get_self<Executable>(e);
 		}
 	};
 	
@@ -24,11 +32,11 @@ namespace GPULib{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename ExprTypeInfer<Symbol<left, right> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return ScalarLib<Symbol<left, right> >::template eval<RetType>(
-					T1::eval(x, y, z, e._1), 
-					T2::eval(x, y, z, e._2));
+					T1::eval(x, y, z, get_operand_1<Executable>(e)), 
+					T2::eval(x, y, z, get_operand_2<Executable>(e)));
 		}
 	};
 	
@@ -36,18 +44,19 @@ namespace GPULib{
 	struct Lib<Symbol<Operand>, Executable>{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<Symbol<Operand> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
-			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, e._1)); 
+			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, get_operand_1<Executable>(e))); 
 		}
 	};
 
 	template <typename T, typename Executable>
 	struct Lib<Field<T>, Executable>{
 		typedef T& RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
-			return e._m[x + y * (e.hx - e.lx) + z * (e.hx - e.lx) * (e.hy - e.ly)];
+			const typename Executable::Self s = get_self<Executable>(e);
+			return s._m[(x - s.lx) + (y - s.ly) * (s.hx - s.lx) + (z - s.lz) * (s.hx - s.lx) * (s.hy - s.ly)];
 		}
 	};
 
@@ -55,7 +64,7 @@ namespace GPULib{
 	struct Lib<REFSYM(coordinate)<Dir> , Executable>{
 		typedef typename Executable::Symbol S;
 		typedef int RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return (int)S::X * x + (int)S::Y * y + (int)S::Z * z;
 		}
@@ -66,12 +75,12 @@ namespace GPULib{
 		typedef typename Executable::Symbol S;
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(shift)<Operand, dx, dy, dz> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return T1::eval(x + (int)S::Dx,
 					        y + (int)S::Dy,
 							z + (int)S::Dz,
-							e._1);
+							get_operand_1<Executable>(e));
 		}
 	};
 
@@ -79,21 +88,44 @@ namespace GPULib{
 	struct Lib<REFSYM(window)<Operand>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(window)<Operand> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
+
+			const typename Executable::Self s = get_self<Executable>(e);
+			const void* _1 = get_operand_1<Executable>(e);
 			return 
-			((e.lx <= x && x < e.hx) &&
-			 (e.ly <= y && y < e.hy) &&
-			 (e.lz <= z && z < e.hz))?T1::eval(x, y, z, e._1):e.defval;
+			((s.lx <= x && x < s.hx) &&
+			 (s.ly <= y && y < s.hy) &&
+			 (s.lz <= z && z < s.hz))?T1::eval(x, y, z, _1):s.defval;
 		}
 	};
 	template <typename T, typename Executable>
 	struct Lib<LValueScalar<T>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<LValueScalar<T> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const Executable& e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
-			return T1::eval(0,0,0,e._1);
+			return T1::eval(0,0,0,get_operand_1<Executable>(e));
+		}
+	};
+	
+	template <typename Var, typename Op1, typename Op2, typename Executable>
+	struct Lib<REFSYM(binding)<Var, Op1, Op2>, Executable>{
+		typedef typename Executable::OP2Type::CodeType T2;
+		typedef typename ExprTypeInfer<Op2>::R RetType;
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		{
+			return T2::eval(x,y,z,get_operand_2<Executable>(e));
+		}
+	};
+
+	template <typename Var, typename Executable>
+	struct Lib<REFSYM(ref)<Var>, Executable>{
+		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		{
+			const void* target = (const void*)(((char*)e) + (int)Executable::Offset);
+			return Executable::Target::CodeType::eval(x,y,z, target);
 		}
 	};
 
@@ -169,7 +201,7 @@ namespace SpatialOps{
 	struct GetExecutor<DEVICE_TYPE_CUDA>
 	{
 		template <typename Executable>
-		__device__ static inline void execute(int x, int y, int z, const Executable& e)
+		__device__ static inline void execute(int x, int y, int z, const void* e)
 		{
 			typedef typename Executable::CodeType Code;
 			Code::eval(x, y, z, e);

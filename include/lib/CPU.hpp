@@ -122,7 +122,6 @@ namespace CPULib{
 		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
 		static inline RetType eval(int x, int y, int z, const void* e)
 		{
-			int offset = (int)Executable::Offset;
 			const void* target = (const void*)(((char*)e) + (int)Executable::Offset);
 			return Executable::Target::CodeType::eval(x,y,z, target);
 		}
@@ -197,11 +196,11 @@ namespace SpatialOps{
 	template <>
 	struct GetExecutor<DEVICE_TYPE_CPU>
 	{
-		template <typename Executable, typename ParamType>
-		static inline void execute(int x, int y, int z, const ParamType&  e)
+		template <typename Executable>
+		static inline void execute(int x, int y, int z, const void* e)
 		{
 			typedef typename Executable::CodeType Code;
-			Code::eval(x, y, z, (const void*)e);
+			Code::eval(x, y, z, e);
 		}
 	};
 }

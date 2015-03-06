@@ -2,8 +2,8 @@
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
-	template <typename Executable>
-	__global__ void execute_kernel(Executable e, int lx, int ly, int lz, int hx, int hy, int hz)
+	template <typename Executable, typename ParamType>
+	__global__ void execute_kernel(ParamType e, int lx, int ly, int lz, int hx, int hy, int hz)
 	{
 		int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
 		int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
@@ -42,8 +42,8 @@ namespace GPURuntime{
 		{
 			return (a + b - 1) / b;
 		}
-		template <typename Executable>
-		static bool execute(const Executable& e, const typename Executable::Symbol s)
+		template <typename Executable, typename ParamType>
+		static bool execute(const ParamType& e, const typename Executable::Symbol s)
 		{
 			int lx, ly, lz, hx, hy, hz;
 			GetRange<typename Executable::Symbol>::get_range(s, lx, ly, lz, hx, hy, hz);
@@ -57,7 +57,7 @@ namespace GPURuntime{
 						   ceil(hz - lz, 8));
 
 
-			execute_kernel<<<block_dim, grid_dim>>>(e, lx, ly, lz, hx, hy, hz);
+			execute_kernel<Executable><<<block_dim, grid_dim>>>(e, lx, ly, lz, hx, hy, hz);
 			return true;
 		}
 	};
