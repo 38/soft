@@ -1,7 +1,7 @@
 #ifndef __BASICOPS_HPP__
 #define __BASICOPS_HPP__
 namespace SpatialOps{
-
+	
 	/* define the symbols */
 	DEF_SYMBOL_2ARGS(add, false);
 	DEF_SYMBOL_2ARGS(sub, false);
@@ -13,7 +13,7 @@ namespace SpatialOps{
 	DEF_SYMBOL_2ARGS(assign, true);
 	DEF_SYMBOL_1ARG(neg, false);
 	DEF_SYMBOL_1ARG(not, false);
-
+	
 	DEF_SYMBOL_2ARGS(lt, false);
 	DEF_SYMBOL_2ARGS(gt, false);
 	DEF_SYMBOL_2ARGS(eq, false);
@@ -30,15 +30,15 @@ namespace SpatialOps{
 	DEF_DEFAULT_OPERAND_2ARGS(and, ||);
 	DEF_DEFAULT_OPERAND_2ARGS(and, ^);
 	DEF_DEFAULT_OPERAND_2ARGS(assign, <<=);
-
+	
 	DEF_DEFAULT_OPERAND_2ARGS(lt, <);
 	DEF_DEFAULT_OPERAND_2ARGS(gt, >);
 	DEF_DEFAULT_OPERAND_2ARGS(eq, ==);
 	DEF_DEFAULT_OPERAND_2ARGS(le, <=);
 	DEF_DEFAULT_OPERAND_2ARGS(ge, >=);
 	DEF_DEFAULT_OPERAND_2ARGS(ne, !=);
-
-
+	
+	
 	/* Define the real uniary operators */
 	template <typename TOperand>
 	REFSYM(neg)<TOperand> operator -(const TOperand& operand)
@@ -47,7 +47,7 @@ namespace SpatialOps{
 		typedef REFSYM(neg)<TOperand> RetType;
 		return RetType(operand);
 	}
-
+	
 	template <typename TOperand>
 	REFSYM(not)<TOperand> operator ~(const TOperand& operand)
 	{
@@ -55,8 +55,8 @@ namespace SpatialOps{
 		typedef REFSYM(not)<TOperand> RetType;
 		return RetType(operand);
 	}
-
-
+	
+	
 	/* Then the type inference section */
 	DEF_TYPE_INFERENCE_2ARGS(add, _1 + _2);
 	DEF_TYPE_INFERENCE_2ARGS(sub, _1 - _2);

@@ -3,7 +3,7 @@
 #define __RUNTIME_CPU_HPP__
 namespace CPURuntime{
 	struct CPURunTimeEnv{
-		typedef void* DeviceMemory; 
+		typedef void* DeviceMemory;
 		static inline void* allocate(unsigned size)
 		{
 			return malloc(size);
@@ -22,14 +22,14 @@ namespace CPURuntime{
 		}
 		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) {}
 		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
-
+		
 		template <typename Executable> struct AnnotationHandler{
 			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){return true;}
 		};
 		template <typename Executable, typename Param>
 		static bool execute(const Param& e, const typename Executable::Symbol& s)
 		{
-			/* you can add annotation handler here 
+			/* you can add annotation handler here
 			 * AnnotationHandler<typename Executable::Symbol>::run(e, s);
 			 */
 			int lx, ly, lz, hx, hy, hz;
@@ -38,11 +38,11 @@ namespace CPURuntime{
 			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
 			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
-			/* do the actual ops */ 
+			/* do the actual ops */
 			for(int x = lx; x < hx; x ++)
-				for(int y = ly; y < hy; y ++)
-					for(int z = lz; z < hz; z ++)
-						GetExecutor<DEVICE_TYPE_CPU>::template execute<Executable>(x, y, z, e);
+			    for(int y = ly; y < hy; y ++)
+			        for(int z = lz; z < hz; z ++)
+			            GetExecutor<DEVICE_TYPE_CPU>::template execute<Executable>(x, y, z, e);
 			return true;
 		}
 	};

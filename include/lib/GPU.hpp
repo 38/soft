@@ -4,7 +4,7 @@
 #include <cmath>
 using namespace SpatialOps;
 namespace GPULib{
-
+	
 	/* This Lib actuall generates the code */
 	template <typename Symbol>
 	struct ScalarLib;
@@ -16,9 +16,9 @@ namespace GPULib{
 	__device__ static inline const void* get_operand_2(const void* mem){return (char*)mem + (int)Executable::_2;}
 	template <typename Executable>
 	__device__ static inline const typename Executable::Self& get_self(const void* mem){return *(typename Executable::Self*)((char*)mem + (int)Executable::_self);}
-
+	
 	/* The glue */
-	template <typename Expr, typename Executable> 
+	template <typename Expr, typename Executable>
 	struct Lib
 	{
 		__device__ static inline Expr eval(int x, int y, int z, const void* e)
@@ -35,8 +35,8 @@ namespace GPULib{
 		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return ScalarLib<Symbol<left, right> >::template eval<RetType>(
-					T1::eval(x, y, z, get_operand_1<Executable>(e)), 
-					T2::eval(x, y, z, get_operand_2<Executable>(e)));
+			        T1::eval(x, y, z, get_operand_1<Executable>(e)),
+			        T2::eval(x, y, z, get_operand_2<Executable>(e)));
 		}
 	};
 	
@@ -46,10 +46,10 @@ namespace GPULib{
 		typedef typename ExprTypeInfer<Symbol<Operand> >::R RetType;
 		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
-			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, get_operand_1<Executable>(e))); 
+			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, get_operand_1<Executable>(e)));
 		}
 	};
-
+	
 	template <typename T, typename Executable>
 	struct Lib<Field<T>, Executable>{
 		typedef T& RetType;
@@ -59,7 +59,7 @@ namespace GPULib{
 			return s._m[(x - s.lx) + (y - s.ly) * (s.hx - s.lx) + (z - s.lz) * (s.hx - s.lx) * (s.hy - s.ly)];
 		}
 	};
-
+	
 	template<typename Dir, typename Executable>
 	struct Lib<REFSYM(coordinate)<Dir> , Executable>{
 		typedef typename Executable::Symbol S;
@@ -69,7 +69,7 @@ namespace GPULib{
 			return (int)S::X * x + (int)S::Y * y + (int)S::Z * z;
 		}
 	};
-
+	
 	template<int dx, int dy, int dz, typename Operand, typename Executable>
 	struct Lib<REFSYM(shift)<Operand, dx, dy, dz>, Executable>{
 		typedef typename Executable::Symbol S;
@@ -78,22 +78,22 @@ namespace GPULib{
 		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return T1::eval(x + (int)S::Dx,
-					        y + (int)S::Dy,
-							z + (int)S::Dz,
-							get_operand_1<Executable>(e));
+			                y + (int)S::Dy,
+			                z + (int)S::Dz,
+			                get_operand_1<Executable>(e));
 		}
 	};
-
+	
 	template<typename Operand, typename Executable>
 	struct Lib<REFSYM(window)<Operand>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(window)<Operand> >::R RetType;
 		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
-
+			
 			const typename Executable::Self s = get_self<Executable>(e);
 			const void* _1 = get_operand_1<Executable>(e);
-			return 
+			return
 			((s.lx <= x && x < s.hx) &&
 			 (s.ly <= y && y < s.hy) &&
 			 (s.lz <= z && z < s.hz))?T1::eval(x, y, z, _1):s.defval;
@@ -118,7 +118,7 @@ namespace GPULib{
 			return T2::eval(x,y,z,get_operand_2<Executable>(e));
 		}
 	};
-
+	
 	template <typename Var, typename Executable>
 	struct Lib<REFSYM(ref)<Var>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
@@ -138,10 +138,10 @@ namespace GPULib{
 			return T1::eval(x, y, z, e);
 		}
 	};
-
-
-
-#define GPU_SCALAR_RULE_2ARGS(sym, expr)\
+	
+	
+	
+	#define GPU_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
 	struct ScalarLib<REFSYM(sym)<left, right> >{\
 		typedef typename ExprTypeInfer<left>::R LType;\
@@ -152,8 +152,8 @@ namespace GPULib{
 			return (expr);\
 		}\
 	}
-
-#define GPU_SCALAR_RULE_1ARG(sym, expr)\
+	
+	#define GPU_SCALAR_RULE_1ARG(sym, expr)\
 	template<typename Operand>\
 	struct ScalarLib<REFSYM(sym)<Operand> >{\
 		typedef typename ExprTypeInfer<Operand>::R OPType;\
@@ -163,7 +163,7 @@ namespace GPULib{
 			return (expr);\
 		}\
 	}
-
+	
 	/* Basic Operators */
 	GPU_SCALAR_RULE_2ARGS(add, _1 + _2);
 	GPU_SCALAR_RULE_2ARGS(sub, _1 - _2);
@@ -182,7 +182,7 @@ namespace GPULib{
 	GPU_SCALAR_RULE_2ARGS(le, _1 <= _2);
 	GPU_SCALAR_RULE_2ARGS(ge, _1 >= _2);
 	GPU_SCALAR_RULE_2ARGS(ne, _1 != _2);
-
+	
 	/* Math Functions */
 	GPU_SCALAR_RULE_1ARG(sin, std::sin((double)_1));
 	GPU_SCALAR_RULE_1ARG(cos, std::cos((double)_1));
@@ -194,10 +194,10 @@ namespace GPULib{
 	GPU_SCALAR_RULE_1ARG(exp, std::exp((double)_1));
 	GPU_SCALAR_RULE_1ARG(log, std::log((double)_1));
 	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
-
+	
 	GPU_SCALAR_RULE_2ARGS(max, (_1 > _2)?_1:_2);
 	GPU_SCALAR_RULE_2ARGS(min, (_1 < _2)?_1:_2);
-
+	
 }
 namespace SpatialOps{
 	/* Export the Library */

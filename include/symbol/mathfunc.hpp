@@ -16,8 +16,8 @@ namespace SpatialOps{
 	DEF_SYMBOL_1ARG(sqrt, false);
 	DEF_SYMBOL_2ARGS(max, false);
 	DEF_SYMBOL_2ARGS(min, false);
-
-
+	
+	
 	/* Define the operators */
 	DEF_DEFAULT_OPERAND_1ARG(sin);
 	DEF_DEFAULT_OPERAND_1ARG(cos);
@@ -31,8 +31,8 @@ namespace SpatialOps{
 	DEF_DEFAULT_OPERAND_1ARG(sqrt);
 	DEF_DEFAULT_FUNCTION_2ARGS(min);
 	DEF_DEFAULT_FUNCTION_2ARGS(max);
-
-
+	
+	
 	/* Type inference section */
 	DEF_TYPE_INFERENCE_1ARG(sin, std::sin(_1));
 	DEF_TYPE_INFERENCE_1ARG(cos, std::cos(_1));

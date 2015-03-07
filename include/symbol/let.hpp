@@ -5,14 +5,14 @@ namespace SpatialOps{
 	/**
 	 * @brief reference to a let-binding variable
 	 **/
-	template <typename var> 
+	template <typename var>
 	struct symbol_ref:public SymbolicExpression {
 		typedef var Var;
 		const inline char* name() const
 		{
 			return "Ref";
 		}
-
+		
 	};
 	template <typename var, typename Env>
 	struct GetRange<symbol_ref<var>, Env>
@@ -47,7 +47,7 @@ namespace SpatialOps{
 	{
 		return symbol_ref<var>();
 	}
-
+	
 	/* Symbol for binding */
 	template <typename var, typename operand1, typename operand2>
 	struct symbol_binding:public SymbolicExpression{
@@ -100,19 +100,19 @@ namespace SpatialOps{
 		return symbol_binding<var, Op1, Op2>(op1, op2);
 	}
 	/*{
-		struct VarX{typedef double T};
-		let<VarX>(x, ref<VarX>() * ref<VarX>())
-
-		because we know the symbolic expression type of 
-		each binding-variable. So that we can retrieve 
-		the reference by it's type
-
-		So the list needs to memorize 
-			1. the BindingId
-			2. the variable type
-
-
-	}*/
-
+	    struct VarX{typedef double T};
+	    let<VarX>(x, ref<VarX>() * ref<VarX>())
+	
+	    because we know the symbolic expression type of
+	    each binding-variable. So that we can retrieve
+	    the reference by it's type
+	
+	    So the list needs to memorize
+	        1. the BindingId
+	        2. the variable type
+	
+	
+    }*/
+	
 }
 #endif

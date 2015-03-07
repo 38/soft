@@ -3,10 +3,10 @@
 
 /** @brief Device Type List */
 enum DeviceType{
-#ifdef __CUDACC__
+	#ifdef __CUDACC__
 	DEVICE_TYPE_CUDA,   /*!< Type for GPUs supports CUDA */
-#endif /*__CUDACC__*/
-
+	#endif /*__CUDACC__*/
+	
 	DEVICE_TYPE_CPU,    /*!< General CPUs backend */
 	
 	NUM_DEVICE_TYPES

@@ -12,12 +12,12 @@ namespace SpatialOps{
 	struct DataValidator<DevId, Executable, 2>{
 		static inline bool validate(void* e, const typename Executable::Symbol& s)
 		{
-			return DataValidator<DevId, 
-			                     typename Executable::OP1Type, 
-								 GetNumOperands<typename Executable::Symbol::Operand_l>::R
-								>::validate(((char*)e) + (int)Executable::_1, s.operand_l) &&
-			       DataValidator<DevId, 
-				                 typename Executable::OP2Type, 
+			return DataValidator<DevId,
+			                     typename Executable::OP1Type,
+			                     GetNumOperands<typename Executable::Symbol::Operand_l>::R
+			                    >::validate(((char*)e) + (int)Executable::_1, s.operand_l) &&
+			       DataValidator<DevId,
+			                     typename Executable::OP2Type,
 			                     GetNumOperands<typename Executable::Symbol::Operand_r>::R
 			                    >::validate(((char*)e) + (int)Executable::_2, s.operand_r);
 		}
@@ -26,8 +26,8 @@ namespace SpatialOps{
 	struct DataValidator<DevId, Executable, 1>{
 		static inline bool validate(void* e, const typename Executable::Symbol& s)
 		{
-			return DataValidator<DevId, 
-			                     typename Executable::OP1Type, 
+			return DataValidator<DevId,
+			                     typename Executable::OP1Type,
 			                     GetNumOperands<typename Executable::Symbol::Operand>::R
 			                    >::validate(((char*)e) + (int)Executable::_1, s.operand);
 		}
@@ -57,8 +57,8 @@ namespace SpatialOps{
 			typedef typename LinkerType::Exec Exec;
 			typename LinkerType::CodeType e;
 			LinkerType::link(expr, e);
-			if(!data_validate<DevId, Exec>((void*)e, expr) || !GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr)) 
-				return SymExprExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);
+			if(!data_validate<DevId, Exec>((void*)e, expr) || !GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr))
+			    return SymExprExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);
 			return true;
 		}
 	};

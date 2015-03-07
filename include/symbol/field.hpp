@@ -24,7 +24,7 @@ namespace SpatialOps{
 		 * @brief construct a field within the given range
 		 **/
 		Field(int lx, int ly, int lz,
-			  int hx, int hy, int hz)
+		      int hx, int hy, int hz)
 		{
 			_high[0] = hx;
 			_high[1] = hy;
@@ -34,9 +34,9 @@ namespace SpatialOps{
 			_low[2] = lz;
 			_identifier = (_NextId<>::get()++);
 			size_t size = (_high[0] - _low[0]) *
-						  (_high[1] - _low[1]) *
-						  (_high[2] - _low[2]) *
-						  sizeof(T);
+			              (_high[1] - _low[1]) *
+			              (_high[2] - _low[2]) *
+			              sizeof(T);
 			InvokeDeviceMM<>::notify_construct(_identifier, size);
 		}
 		Field(const Field& f) : _identifier(f._identifier)
@@ -48,9 +48,9 @@ namespace SpatialOps{
 			_low[1] = f._low[1];
 			_low[2] = f._low[2];
 			size_t size = (_high[0] - _low[0]) *
-						  (_high[1] - _low[1]) *
-						  (_high[2] - _low[2]) *
-						  sizeof(T);
+			              (_high[1] - _low[1]) *
+			              (_high[2] - _low[2]) *
+			              sizeof(T);
 			InvokeDeviceMM<>::notify_construct(_identifier, size);
 		}
 		inline const char* name() const
@@ -60,7 +60,7 @@ namespace SpatialOps{
 			return _buf;
 		}
 		void inline get_range(int& lx, int& ly, int&lz,
-							  int& hx, int& hy, int&hz) const
+		                      int& hx, int& hy, int&hz) const
 		{
 			lx = _low[0];
 			ly = _low[1];
@@ -84,7 +84,7 @@ namespace SpatialOps{
 			return ret;
 		}
 		inline int getid(){return _identifier;}
-
+		
 		inline void print() const
 		{
 			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
@@ -95,18 +95,18 @@ namespace SpatialOps{
 				for(int y = ly; y < hy; y ++)
 				{
 					for(int x = lx; x < hx; x ++)
-						std::cout << _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)] << '\t';
+					    std::cout << _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)] << '\t';
 					std::cout << std::endl;
 				}
 				std::cout << std::endl;
 			}
 			std::cout << std::endl;
 		}
-
+		
 		private:
-			int _high[3];  /**!< the high bound of the field **/
-			int _low[3];   /**!< the low bound of the field **/
-			unsigned _identifier; /**!< the unique identifier of this field */
+		    int _high[3];  /**!< the high bound of the field **/
+		    int _low[3];   /**!< the low bound of the field **/
+		    unsigned _identifier; /**!< the unique identifier of this field */
 	};
 	template <typename T, typename Env>
 	struct GetRange<Field<T>, Env >{
@@ -116,7 +116,7 @@ namespace SpatialOps{
 		}
 	};
 	/* # of operand is 0, just use default */
-
+	
 	/* Type inference class */
 	template <typename T >
 	struct ExprTypeInfer<Field<T> >{

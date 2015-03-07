@@ -2,7 +2,7 @@
 #ifndef __UTIL_MEMORY_MANAGER_HPP__
 #define __UTIL_MEMORY_MANAGER_HPP__
 namespace SpatialOps {
-	template <int DeviceType = 0> 
+	template <int DeviceType = 0>
 	struct InvokeDeviceMM{
 		struct MemoryMapValue{
 			typedef typename GetDeviceRuntimeEnv<DeviceType>::R::DeviceMemory dev_mem_ptr_t;
@@ -18,10 +18,10 @@ namespace SpatialOps {
 			inline bool decref()
 			{
 				if(ref_cnt > 0) ref_cnt --;
-				if(ref_cnt == 0 && GetDeviceRuntimeEnv<DeviceType>::R::is_valid_pointer(mem)) 
+				if(ref_cnt == 0 && GetDeviceRuntimeEnv<DeviceType>::R::is_valid_pointer(mem))
 				{
 					GetDeviceRuntimeEnv<DeviceType>::R::deallocate(mem);
-					mem = GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer(); 
+					mem = GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer();
 					return true;
 				}
 				return false;
@@ -37,11 +37,11 @@ namespace SpatialOps {
 			static std::map<int, MemoryMapValue*> _memory_map;
 			return _memory_map;
 		}
-
+		
 		static inline void notify_construct(int id, unsigned size)
 		{
 			if(get_memory_map().find(id) == get_memory_map().end())
-				get_memory_map()[id] = new MemoryMapValue(size);
+			    get_memory_map()[id] = new MemoryMapValue(size);
 			get_memory_map()[id]->incref();
 			InvokeDeviceMM<DeviceType + 1>::notify_construct(id, size);
 		}
@@ -54,20 +54,20 @@ namespace SpatialOps {
 			}
 			InvokeDeviceMM<DeviceType + 1>::notify_destruct(id);
 		}
-
+		
 		static inline void* get_memory(int id)
 		{
 			if(get_memory_map().find(id) == get_memory_map().end()) return GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer();
-			if(get_memory_map()[id]->mem == GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer()) 
-				get_memory_map()[id]->mem = GetDeviceRuntimeEnv<DeviceType>::R::allocate(get_memory_map()[id]->size);
+			if(get_memory_map()[id]->mem == GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer())
+			    get_memory_map()[id]->mem = GetDeviceRuntimeEnv<DeviceType>::R::allocate(get_memory_map()[id]->size);
 			return (void*)get_memory_map()[id]->mem;
 		}
-
+		
 		static inline void set_timestamp(int id, int ts)
 		{
 			get_memory_map()[id]->update_ts(ts);
 		}
-
+		
 		static inline int find_up_to_dated_copy(int id, int& max_ts)
 		{
 			if(get_memory_map()[id]->timestamp > max_ts) max_ts = get_memory_map()[id]->timestamp;
@@ -75,13 +75,13 @@ namespace SpatialOps {
 			if(r == -1 && get_memory_map()[id]->timestamp == max_ts) return DeviceType;
 			return -1;
 		}
-
+		
 		static inline void copy_to_host(int id, int device, void* dest)
 		{
-			if(device == DeviceType) 
-				GetDeviceRuntimeEnv<DeviceType>::R::copy_to_host(dest, get_memory_map()[id]->mem, get_memory_map()[id]->size);
+			if(device == DeviceType)
+			    GetDeviceRuntimeEnv<DeviceType>::R::copy_to_host(dest, get_memory_map()[id]->mem, get_memory_map()[id]->size);
 			else
-				InvokeDeviceMM<DeviceType + 1>::copy_to_host(id, device, dest);
+			    InvokeDeviceMM<DeviceType + 1>::copy_to_host(id, device, dest);
 		}
 		
 		static inline void synchronize_device(int id, int uptodate_dev)
@@ -92,12 +92,12 @@ namespace SpatialOps {
 			void* host_mem = InvokeDeviceMM<DEVICE_TYPE_CPU>::get_memory(id);
 			
 			/* then copy the device memory to cpu */
-			if(uptodate_dev != (int)DEVICE_TYPE_CPU) 
-				InvokeDeviceMM<0>::copy_to_host(id, uptodate_dev, host_mem);
+			if(uptodate_dev != (int)DEVICE_TYPE_CPU)
+			    InvokeDeviceMM<0>::copy_to_host(id, uptodate_dev, host_mem);
 			
 			/* finally copy the host memory to target device */
 			if(DeviceType != (int)DEVICE_TYPE_CPU)
-				GetDeviceRuntimeEnv<DeviceType>::R::copy_from_host(get_memory_map()[id]->mem, host_mem, get_memory_map()[id]->size); 
+			    GetDeviceRuntimeEnv<DeviceType>::R::copy_from_host(get_memory_map()[id]->mem, host_mem, get_memory_map()[id]->size);
 		}
 	};
 	template <>

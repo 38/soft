@@ -6,7 +6,7 @@
 namespace SpatialOps{
 	/* Link the code with the Library */
 	template <typename Expr, int DeviceId, typename Env, int offset> struct Executable;
-
+	
 	/**
 	 * @brief Generate the executable code for the symbolic expression
 	 **/
@@ -58,7 +58,7 @@ namespace SpatialOps{
 			_self = 0
 		};
 	};
-	template <typename Expr, int DeviceId, typename Env, int offset> 
+	template <typename Expr, int DeviceId, typename Env, int offset>
 	struct Executable{
 		typedef Expr Symbol;
 		typedef Symbol Self;
@@ -109,7 +109,7 @@ namespace SpatialOps{
 		//Self;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
-			Self* self = (Self*)(((char*)mem) + SIZE_PADDING(OP1Type)); 
+			Self* self = (Self*)(((char*)mem) + SIZE_PADDING(OP1Type));
 			OP1Type::init(_symbol.operand, mem);
 			typedef GetRange<Operand, Env> RangeFinder;
 			RangeFinder::get_range(_symbol.operand, self->lx, self->ly, self->lz, self->hx, self->hy, self->hz);

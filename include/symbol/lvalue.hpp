@@ -1,5 +1,5 @@
 #ifndef __SYMBOL_LVALUE_HPP__
-#define __SYMBOL_LVALUE_HPP__ 
+#define __SYMBOL_LVALUE_HPP__
 #include <symbol/field.hpp>
 namespace SpatialOps{
 	template <typename T>
@@ -11,7 +11,7 @@ namespace SpatialOps{
 		inline const char* name() const
 		{
 			return "LValueScalar";
-		}		
+		}
 	};
 	template <typename T>
 	struct GetNumOperands<LValueScalar<T> >{

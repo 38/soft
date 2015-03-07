@@ -19,7 +19,7 @@ namespace SpatialOps{
 		}
 		template <typename Env>
 		inline void get_range(int& lx, int& ly, int&lz,
-							  int& hx, int& hy, int&hz) const
+		                      int& hx, int& hy, int&hz) const
 		{
 			typedef GetRange<Operand, Env> RangeFinder;
 			RangeFinder::get_range(operand, lx, ly, lz, hx, hy, hz);
@@ -35,7 +35,7 @@ namespace SpatialOps{
 	template <typename operand, int x, int y, int z>
 	struct GetNumOperands<symbol_shift<operand, x, y, z> >{
 		enum{
-			R = 1 
+			R = 1
 		};
 	};
 	template <typename operand, int x, int y, int z, typename Env>

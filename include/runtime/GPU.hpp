@@ -16,7 +16,7 @@ namespace GPURuntime{
 		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_CUDA>::execute<Executable>(x, y, z, &e);
 	}
 	struct GPURunTimeEnv{
-		typedef void* DeviceMemory; 
+		typedef void* DeviceMemory;
 		static inline void* allocate(unsigned size)
 		{
 			void* ptr;
@@ -27,7 +27,7 @@ namespace GPURuntime{
 		{
 			cudaFree(mem);
 		}
-		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) 
+		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size)
 		{
 			cudaMemcpy(dest, sour, size, cudaMemcpyHostToDevice);
 		}
@@ -67,7 +67,7 @@ namespace GPURuntime{
 			dim3 grid_dim( ceil(hx - lx, blockX),
 			               ceil(hy - ly, blockY),
 			               ceil(hz - lz, blockZ));
-
+			
 			execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
 			return true;
 		}
