@@ -1,7 +1,7 @@
 #ifndef __LINKER_HPP__
 
 #define PADDING 4
-#define SIZE_PADDING(type) (((int)type::Size&~(PADDING-1)) + (int)((int)type::Size & (PADDING-1) == 0) * PADDING)
+#define SIZE_PADDING(type) (((int)type::Size&~(PADDING-1)) + (int)(((int)type::Size & (PADDING-1)) == 0) * PADDING)
 
 namespace SpatialOps{
 	/* Link the code with the Library */
@@ -12,11 +12,12 @@ namespace SpatialOps{
 	 **/
 	template <int DeviceId, typename Expr>
 	struct Linker{
-		typedef Executable<Expr, DeviceId, EmptyEnv, 0> Exec;
+		typedef InvokeDevicePP<DeviceId, Expr> PP;
+		typedef Executable<typename PP::RetType, DeviceId, EmptyEnv, 0> Exec;
 		typedef char CodeType[Exec::Size];
 		static inline void link(const Expr& symbolic_expr, CodeType& mem)
 		{
-			Exec::init(InvokeDevicePP<DeviceId, Expr>::preprocess(symbolic_expr), mem);
+			Exec::init(PP::preprocess(symbolic_expr), mem);
 		}
 	};
 	template <template <typename ,typename> class BinSym, typename Left, typename Right, int DeviceId, typename Env, int offset>
@@ -148,13 +149,20 @@ namespace SpatialOps{
 		};
 	};
 	template <typename Operand, typename Annotation, int DeviceId, typename Env, int offset>
-	struct Executable<symbol_annotation<Operand, Annotation>, DeviceId, Env, offset>: public Executable<Operand, DeviceId, Env, offset>{
-		/* simply do nothing */
+	struct Executable<symbol_annotation<Operand, Annotation>, DeviceId, Env, offset>{
+		struct Self{};
 		typedef symbol_annotation<Operand, Annotation> Symbol;
+		typedef Executable<Operand, DeviceId, Env, offset> OP1Type;
+		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
+		enum{Size = 0};
 		static inline void init (const Symbol& _symbol, void* mem)
 		{
 			Executable<Operand, DeviceId, Env, offset>::init(_symbol, mem);
 		}
+		enum{
+			_1 = 0,
+			_self = 0
+		};
 	};
 	template <typename var, typename Op1, typename Op2, int DeviceId, typename Env, int offset>
 	struct Executable<symbol_binding<var, Op1, Op2>, DeviceId, Env, offset>

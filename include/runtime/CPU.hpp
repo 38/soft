@@ -24,7 +24,7 @@ namespace CPURuntime{
 		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
 
 		template <typename Executable> struct AnnotationHandler{
-			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){}
+			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){return true;}
 		};
 		template <typename Executable, typename Param>
 		static bool execute(const Param& e, const typename Executable::Symbol& s)

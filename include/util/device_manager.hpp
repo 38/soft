@@ -15,6 +15,7 @@ namespace SpatialOps{
 	/** Define default PP */
 	template <int DeviceType, typename SExpr> 
 	struct InvokeDevicePP{
+		typedef SExpr RetType;
 		static inline const SExpr& preprocess(const SExpr& e)
 		{
 			return e;

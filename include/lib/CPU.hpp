@@ -127,6 +127,16 @@ namespace CPULib{
 		}
 	};
 
+	template <typename Operand, typename Annotation, typename Executable>
+	struct Lib<REFSYM(annotation)<Operand, Annotation>, Executable>{
+		typedef typename ExprTypeInfer<REFSYM(annotation)<Operand, Annotation> >::R RetType;
+		typedef typename Executable::OP2Type::CodeType T1;
+		static inline RetType eval(int x, int y, int z, const void* e)
+		{
+			return T1::eval(x, y, z, e);
+		}
+	};
+
 #define CPU_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
 	struct ScalarLib<REFSYM(sym)<left, right> >{\

@@ -7,7 +7,7 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCLUDEDIR) $*.cpp -o $*.o
-	g++ -MM $(CXXFLAGS) $(INCLUDEDIR) $*.cpp > $*.d
+	g++ -MM $(INCLUDEDIR) $*.cpp > $*.d
 
 clean:
 	rm -f main *.o *.d

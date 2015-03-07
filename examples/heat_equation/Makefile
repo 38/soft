@@ -1,3 +1,5 @@
+#CXX=nvcc 
+#CXXFLAGS=-x cu -g
 CXX=g++
 CXXFLAGS=-g
 LIBDIR=../..

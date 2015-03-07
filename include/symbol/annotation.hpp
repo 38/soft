@@ -3,7 +3,7 @@
 namespace SpatialOps{
 	/* Define the symbol to make linker annotations */
 	template <typename what, typename annotation>
-	struct symbol_annotation:public what{
+	struct symbol_annotation:public SymbolicExpression{
 		typedef what Operand;
 		inline symbol_annotation(const what& op): what(op){}
 		const inline char* name() const
@@ -15,7 +15,7 @@ namespace SpatialOps{
 	template <typename operand, typename annotation>
 	struct GetNumOperands<symbol_annotation<operand, annotation> >{
 		enum{
-			R = GetNumOperands<operand>::R
+			R = 1
 		};
 	};
 	template <typename operand, typename annotation, typename Env>

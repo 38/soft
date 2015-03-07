@@ -128,6 +128,16 @@ namespace GPULib{
 			return Executable::Target::CodeType::eval(x,y,z, target);
 		}
 	};
+	
+	template <typename Operand, typename Annotation, typename Executable>
+	struct Lib<REFSYM(annotation)<Operand, Annotation>, Executable>{
+		typedef typename ExprTypeInfer<REFSYM(annotation)<Operand, Annotation> >::R RetType;
+		typedef typename Executable::OP2Type::CodeType T1;
+		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		{
+			return T1::eval(x, y, z, e);
+		}
+	};
 
 
 
@@ -215,6 +225,7 @@ namespace SpatialOps{
 	{
 		typedef REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT>, SExpr> > AssignmentExpr;
 		typedef symbol_annotation<AssignmentExpr, annotation_gpu_reduction> Annotated;
+		typedef Annotated RetType;
 		static inline Annotated preprocess(const AssignmentExpr& e)
 		{
 			return Annotated(e);
