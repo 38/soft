@@ -10,7 +10,7 @@ namespace SpatialOps{
 		typedef var Var;
 		const inline char* name() const
 		{
-			return typeid(Var).name();
+			return "Ref";
 		}
 
 	};
