@@ -2,6 +2,7 @@
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
+	/* This Wrap type can make all runtime data copy to the GPU when launching kernel function */
 	template <typename Param>
 	struct GPUParamWrap{
 		char data[sizeof(Param)];
@@ -47,29 +48,46 @@ namespace GPURuntime{
 		{
 			return (a + b - 1) / b;
 		}
-		template <typename Executable, typename ParamType>
-		static bool execute(const ParamType& e, const typename Executable::Symbol s)
+		template <typename Symbolic, typename Executable, typename ParamType>
+		struct Executor{
+			static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
+			{
+				int lx, ly, lz, hx, hy, hz;
+				GetRange<typename Executable::Symbol, EmptyEnv>::get_range(s, lx, ly, lz, hx, hy, hz);
+				/* avoid inf-loop */
+				if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
+				if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
+				if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
+				int blockX = 8;
+				int blockY = 8;
+				int blockZ = 8;
+				if(hx - lx < 8) blockX = hx - lx;
+				if(hy - ly < 8) blockY = hy - lx;
+				if(hz - lz < 8) blockZ = hz - lz;
+				if(blockX == 0 || blockY == 0 || blockZ == 0) return true;
+				dim3 block_dim(blockX, blockY, blockZ);
+				dim3 grid_dim( ceil(hx - lx, blockX),
+							   ceil(hy - ly, blockY),
+							   ceil(hz - lz, blockZ));
+				
+				execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
+				return true;
+			}
+		};
+		/*
+		 * TODO for GPU REDUCTION
+		template <typename Expr, typename Executable, typename ParamType>
+		struct Executor<symbol_annotation<Expr, gpu_reduction_annotation>, Executable, ParamType>{
+			static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
+			{
+				if(gpu_reduction_annotation::Valid == 0 || 
+				   
+			}
+
+		};*/
+		static inline bool execute(const ParamType& e, const typename Executable::Symbol& s)
 		{
-			int lx, ly, lz, hx, hy, hz;
-			GetRange<typename Executable::Symbol, EmptyEnv>::get_range(s, lx, ly, lz, hx, hy, hz);
-			/* avoid inf-loop */
-			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
-			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
-			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
-			int blockX = 8;
-			int blockY = 8;
-			int blockZ = 8;
-			if(hx - lx < 8) blockX = hx - lx;
-			if(hy - ly < 8) blockY = hy - lx;
-			if(hz - lz < 8) blockZ = hz - lz;
-			if(blockX == 0 || blockY == 0 || blockZ == 0) return true;
-			dim3 block_dim(blockX, blockY, blockZ);
-			dim3 grid_dim( ceil(hx - lx, blockX),
-			               ceil(hy - ly, blockY),
-			               ceil(hz - lz, blockZ));
-			
-			execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
-			return true;
+			return Executor<typename Executor::Symbol, Executor, ParamType>::execute(e, s);
 		}
 	};
 }

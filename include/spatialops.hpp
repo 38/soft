@@ -54,4 +54,5 @@
 #include <runtime/GPU.hpp>
 #endif
 
+#define DEFINE_FORMULA(name, expr) typeof(expr) name = expr
 #endif

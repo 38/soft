@@ -218,13 +218,39 @@ namespace SpatialOps{
 		}
 	};
 	/* Define the Preprocessor */
-	struct annotation_gpu_reduction{};
+
+	/* We should make sure that this operator holds assocative property */
+	template<typename <typename, typename class BinOp>
+	struct ValidateReduction<BinOp>{
+		enum{R = 0};
+	};
+#define GPU_VALID_REDUCTION(name) tmeplate<> struct ValidateReduction<REFSYM(name)>{enum{R = 1};}
+	GPU_VALID_REDUCTION(add);
+	GPU_VALID_REDUCTION(mul);
+	GPU_VALID_REDUCTION(and);
+	GPU_VALID_REDUCTION(or);
+	GPU_VALID_REDUCTION(xor);
+	GPU_VALID_REDUCTION(max);
+	GPU_VALID_REDUCTION(min);
+
+	/* The annotation for the GPU Reduction */
+	template<typename <typename, typename> class BinOp, typename Expr> 
+	struct annotation_gpu_reduction{
+		typedef typename ExprTypeInfer<Expr>::R RetType;
+		enum{
+			Valid = ValidateReduction<BinOp>::R
+		};
+		__device__ static inline RetType exec(const RetType& l, const RetType& r)
+		{
+			return GPULib::ScalarLib<symbol_add<R, R> >::eval(r, r);
+		}
+	};
 	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the GPU Reduction symbol */
 	template <template <typename, typename> class BinOp, typename ResultT, typename SExpr>
 	struct InvokeDevicePP<DEVICE_TYPE_CUDA, REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT> , SExpr> > >
 	{
 		typedef REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT>, SExpr> > AssignmentExpr;
-		typedef symbol_annotation<AssignmentExpr, annotation_gpu_reduction> Annotated;
+		typedef symbol_annotation<AssignmentExpr, annotation_gpu_reduction<BinOp, SExpr> > Annotated;
 		typedef Annotated RetType;
 		static inline Annotated preprocess(const AssignmentExpr& e)
 		{
