@@ -20,7 +20,7 @@ namespace GPURuntime{
 		static inline void* allocate(unsigned size)
 		{
 			void* ptr;
-			cudaMalloc(&ptr, size);
+			if(cudaSuccess != cudaMalloc(&ptr, size)) return NULL;
 			return ptr;
 		}
 		static inline void deallocate(DeviceMemory mem)
@@ -56,10 +56,17 @@ namespace GPURuntime{
 			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
 			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
-			dim3 block_dim(8,8,8);
-			dim3 grid_dim( ceil(hx - lx, 8),
-			               ceil(hy - ly, 8),
-			               ceil(hz - lz, 8));
+			int blockX = 8;
+			int blockY = 8;
+			int blockZ = 8;
+			if(hx - lx < 8) blockX = hx - lx;
+			if(hy - ly < 8) blockY = hy - lx;
+			if(hz - lz < 8) blockZ = hz - lz;
+			if(blockX == 0 || blockY == 0 || blockZ == 0) return true;
+			dim3 block_dim(blockX, blockY, blockZ);
+			dim3 grid_dim( ceil(hx - lx, blockX),
+			               ceil(hy - ly, blockY),
+			               ceil(hz - lz, blockZ));
 
 			execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
 			return true;

@@ -1,6 +1,6 @@
 #include <spatialops.hpp>
 using namespace SpatialOps;
-#define SZ 400
+#define SZ 6
 const double deltaX = 1.0/SZ;
 const double deltaY = 1.0/SZ;
 const double sqrdDeltaX = deltaX * deltaX;

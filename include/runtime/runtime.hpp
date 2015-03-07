@@ -36,7 +36,12 @@ namespace SpatialOps{
 	struct DataValidator<DeviceId, Executable<Field<T>, DeviceId, Env, offset>, 0>{
 		static inline bool validate(void* e, const Field<T>& s)
 		{
-			return ((typename Executable<Field<T>, DeviceId, Env, offset>::Self*)e)->_m = s.template get_memory<DeviceId>();
+			bool result = ((typename Executable<Field<T>, DeviceId, Env, offset>::Self*)e)->_m = s.template get_memory<DeviceId>();
+			if(!result)
+			{
+				fprintf(stderr, "Can not allocate memory on device %d\n", DeviceId);
+			}
+			return result;
 		}
 	};
 	template <int DevId, typename Executable>
