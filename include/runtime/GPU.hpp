@@ -61,7 +61,7 @@ namespace GPURuntime{
 			               ceil(hy - ly, 8),
 			               ceil(hz - lz, 8));
 
-			execute_kernel<Executable><<<block_dim, grid_dim>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
+			execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
 			return true;
 		}
 	};

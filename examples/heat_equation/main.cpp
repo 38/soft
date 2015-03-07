@@ -1,8 +1,8 @@
 #include <spatialops.hpp>
 using namespace SpatialOps;
-
-const double deltaX = 1/6.0;
-const double deltaY = 1/6.0;
+#define SZ 400
+const double deltaX = 1.0/SZ;
+const double deltaY = 1.0/SZ;
 const double sqrdDeltaX = deltaX * deltaX;
 const double sqrdDeltaY = deltaY * deltaY;
 const double sqrdDeltaXYmult = sqrdDeltaX * sqrdDeltaY;
@@ -12,9 +12,9 @@ struct X{typedef double T;};
 struct Y{typedef double T;};
 int main()
 {
-	Field<double> phi(-1,-1,0,7,7,1);
-	Field<double> rhs(-1,-1,0,7,7,1);
-	Field<double> alpha(-1,-1,0,7,7,1);
+	Field<double> phi(-1,-1,0,SZ + 1,SZ + 1,1);
+	Field<double> rhs(-1,-1,0,SZ + 1,SZ + 1,1);
+	Field<double> alpha(-1,-1,0,SZ + 1,SZ + 1,1);
 
 	alpha <<= 1;
 
@@ -27,28 +27,30 @@ int main()
 	rhs <<= 0;
 	
 	phi <<= 5.0;
-	phi <<= window(10.0, 0.0, -1, -1,0 , 0, 7, 1);
-	phi <<= window(0.0, 0.0, 6, -1, 0, 7, 7 , 1);
+	phi <<= window(10.0, 0.0, -1, -1,0 , 0, SZ + 1, 1);
+	phi <<= window(0.0, 0.0, SZ, -1, 0, SZ + 1, SZ + 1 , 1);
 
-	int nSteps = 40;
+	int nSteps = 5000;
 	for(int i = 0; i < nSteps; i ++)
 	{
 		rhs <<= let<X>(alpha,let<Y>(phi,(DivR<XDir>( Interp<XDir>(ref<X>()) * Div<XDir>(ref<Y>())) +
-		                                 DivR<YDir>( Interp<YDir>(ref<X>()) * Div<YDir>(ref<Y>()))) * 36.0));
+		                                 DivR<YDir>( Interp<YDir>(ref<X>()) * Div<YDir>(ref<Y>()))) * SZ * SZ));
 		phi <<= phi + deltaT * rhs;
 
 		phi <<= phi;
 		
 		phi <<= window(5.0, 0.0, -1, -1, 0, 
-		                          7,  0, 1);
-		phi <<= window(5.0, 0.0, -1,  6, 0, 
-		                          7,  7, 1);
+		                          SZ + 1,  0, 1);
+		phi <<= window(5.0, 0.0, -1,  SZ, 0, 
+		                          SZ + 1,  SZ + 1, 1);
 		
 		phi <<= window(10.0, 0.0, -1, -1,0 , 
-		                           0, 7, 1);
-		phi <<= window(0.0, 0.0, 6, -1, 0, 
-		                         7,  7, 1);
-		phi.print();
+		                           0, SZ + 1, 1);
+		phi <<= window(0.0, 0.0, SZ, -1, 0, 
+		                         SZ + 1,  SZ + 1, 1);
 	}
+
+	phi.print();
+
 	return 0;
 }
