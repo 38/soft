@@ -5,11 +5,12 @@ namespace SpatialOps{
 	template <typename what, typename annotation>
 	struct symbol_annotation:public SymbolicExpression{
 		typedef what Operand;
-		inline symbol_annotation(const what& op): what(op){}
+		inline symbol_annotation(const what& op): operand(op){}
 		const inline char* name() const
 		{
 			return "Annotation";
 		}
+		Operand operand;
 	};
 	
 	template <typename operand, typename annotation>
@@ -23,7 +24,7 @@ namespace SpatialOps{
 		static void get_range(const symbol_annotation<operand, annotation>& e, int& lx, int& ly, int&lz, int& hx, int& hy, int& hz)
 		{
 			typedef GetRange<operand, Env> RangeFinder;
-			RangeFinder::get_range(e,lx, ly, lz, hx, hy, hz);
+			RangeFinder::get_range(e.operand, lx, ly, lz, hx, hy, hz);
 		}
 	};
 	template <typename operand, typename annotation>

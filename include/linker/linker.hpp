@@ -154,10 +154,10 @@ namespace SpatialOps{
 		typedef symbol_annotation<Operand, Annotation> Symbol;
 		typedef Executable<Operand, DeviceId, Env, offset> OP1Type;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
-		enum{Size = 0};
+		enum{Size = (int)OP1Type::Size};
 		static inline void init (const Symbol& _symbol, void* mem)
 		{
-			Executable<Operand, DeviceId, Env, offset>::init(_symbol, mem);
+			OP1Type::init(_symbol.operand, mem);
 		}
 		enum{
 			_1 = 0,

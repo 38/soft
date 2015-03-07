@@ -132,7 +132,7 @@ namespace GPULib{
 	template <typename Operand, typename Annotation, typename Executable>
 	struct Lib<REFSYM(annotation)<Operand, Annotation>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(annotation)<Operand, Annotation> >::R RetType;
-		typedef typename Executable::OP2Type::CodeType T1;
+		typedef typename Executable::OP1Type::CodeType T1;
 		__device__ static inline RetType eval(int x, int y, int z, const void* e)
 		{
 			return T1::eval(x, y, z, e);
