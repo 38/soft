@@ -67,8 +67,8 @@ namespace GPURuntime{
 				if(blockX == 0 || blockY == 0 || blockZ == 0) return true;
 				dim3 block_dim(blockX, blockY, blockZ);
 				dim3 grid_dim( ceil(hx - lx, blockX),
-							   ceil(hy - ly, blockY),
-							   ceil(hz - lz, blockZ));
+				               ceil(hy - ly, blockY),
+				               ceil(hz - lz, blockZ));
 				
 				execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
 				return true;
@@ -78,16 +78,17 @@ namespace GPURuntime{
 		 * TODO for GPU REDUCTION
 		template <typename Expr, typename Executable, typename ParamType>
 		struct Executor<symbol_annotation<Expr, gpu_reduction_annotation>, Executable, ParamType>{
-			static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
-			{
-				if(gpu_reduction_annotation::Valid == 0 || 
-				   
-			}
-
-		};*/
+		    static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
+		    {
+		        if(gpu_reduction_annotation::Valid == 0 ||
+		           
+	        }
+		
+	    };*/
+		template<typename Executable, typename ParamType>
 		static inline bool execute(const ParamType& e, const typename Executable::Symbol& s)
 		{
-			return Executor<typename Executor::Symbol, Executor, ParamType>::execute(e, s);
+			return Executor<typename Executable::Symbol, Executable, ParamType>::execute(e, s);
 		}
 	};
 }

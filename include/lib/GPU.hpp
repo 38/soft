@@ -218,13 +218,13 @@ namespace SpatialOps{
 		}
 	};
 	/* Define the Preprocessor */
-
+	
 	/* We should make sure that this operator holds assocative property */
-	template<typename <typename, typename class BinOp>
-	struct ValidateReduction<BinOp>{
+	template<template <typename, typename> class BinOp>
+	struct ValidateReduction{
 		enum{R = 0};
 	};
-#define GPU_VALID_REDUCTION(name) tmeplate<> struct ValidateReduction<REFSYM(name)>{enum{R = 1};}
+	#define GPU_VALID_REDUCTION(name) template<> struct ValidateReduction<REFSYM(name)>{enum{R = 1};}
 	GPU_VALID_REDUCTION(add);
 	GPU_VALID_REDUCTION(mul);
 	GPU_VALID_REDUCTION(and);
@@ -232,9 +232,9 @@ namespace SpatialOps{
 	GPU_VALID_REDUCTION(xor);
 	GPU_VALID_REDUCTION(max);
 	GPU_VALID_REDUCTION(min);
-
+	
 	/* The annotation for the GPU Reduction */
-	template<typename <typename, typename> class BinOp, typename Expr> 
+	template<template <typename, typename> class BinOp, typename Expr>
 	struct annotation_gpu_reduction{
 		typedef typename ExprTypeInfer<Expr>::R RetType;
 		enum{
@@ -242,7 +242,7 @@ namespace SpatialOps{
 		};
 		__device__ static inline RetType exec(const RetType& l, const RetType& r)
 		{
-			return GPULib::ScalarLib<symbol_add<R, R> >::eval(r, r);
+			return GPULib::ScalarLib<symbol_add<RetType, RetType> >::eval(r, r);
 		}
 	};
 	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the GPU Reduction symbol */

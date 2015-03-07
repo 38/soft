@@ -1,14 +1,14 @@
 /**
  * @file devices.hpp
  * @brief Define the available device and assign device index to different type of device
- *        The executor will attempt to execute the formula from the device with the 
- *        minimum device number. 
+ *        The executor will attempt to execute the formula from the device with the
+ *        minimum device number.
  *        So if some device is preferred, you should put it in the beginning of the list
  **/
 #ifndef __CONFIGURE_H__
 #define __CONFIGURE_H__
 
-/** 
+/**
  * @brief Define the device list
  **/
 enum DeviceType{

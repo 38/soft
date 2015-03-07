@@ -14,10 +14,9 @@ int main()
 {
 	Field<double> phi(-1,-1,0,SZ + 1,SZ + 1,1);
 	Field<double> rhs(-1,-1,0,SZ + 1,SZ + 1,1);
-
+	
 	DEFINE_FORMULA(alpha, 1.0);
-
-
+	
 	/* Reduction */
 	LValueScalar<double> deltaT;
 	deltaT <<= INT_MAX;

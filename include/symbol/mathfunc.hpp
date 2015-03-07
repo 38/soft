@@ -46,7 +46,7 @@ namespace SpatialOps{
 	DEF_TYPE_INFERENCE_1ARG(sqrt, std::sqrt(_1));
 	DEF_TYPE_INFERENCE_2ARGS(min, std::min(_1, _2));
 	DEF_TYPE_INFERENCE_2ARGS(max, std::max(_1, _2));
-
+	
 }
 #endif
 

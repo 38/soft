@@ -17,6 +17,7 @@ def format(fp):
 	idlevel = 0
 	recent = "  "
 	result = ""
+	changed = False
 	for line in fp:
 		spaces = 0
 		for ch in line:
@@ -43,8 +44,9 @@ def format(fp):
 				if(ch == '{'): idlevel += 1
 				if(ch == '}'): idlevel -= 1
 		result += header + line.strip() + "\n"
+		if header + line.strip() + "\n" != line: changed = True
 	fp.close()
-	return result
+	return changed,result
 				
 
 fn=r'.*\.(c|h|cpp|cxx|hpp)$'
@@ -54,7 +56,8 @@ for root, _, files in os.walk("."):
 	for f in files:
 		if not re.match(fn,f): continue
 		path="%s/%s"%(root,f)
-		result = format(file(path))
+		ch, result = format(file(path))
+		if ch: print "Info: file %s has been changed"%path
 		f = file(path, "w")
 		f.write(result)
 		f.close()
