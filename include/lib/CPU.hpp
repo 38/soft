@@ -192,8 +192,8 @@ namespace CPULib{
 	CPU_SCALAR_RULE_1ARG(sqrt, std::sqrt(_1));
 	
 	
-	CPU_SCALAR_RULE_2ARGS(max, std::max(_1, _2));
-	CPU_SCALAR_RULE_2ARGS(min, std::min(_1, _2));
+	CPU_SCALAR_RULE_2ARGS(max, std::max((RetType)_1, (RetType)_2));
+	CPU_SCALAR_RULE_2ARGS(min, std::min((RetType)_1, (RetType)_2));
 	
 }
 namespace SpatialOps{

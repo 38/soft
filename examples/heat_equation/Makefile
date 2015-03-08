@@ -1,7 +1,7 @@
 #CXX=nvcc 
 #CXXFLAGS=-x cu -g -O3
-CXX=clang++-3.6
-CXXFLAGS=-O3 -g
+CXX=g++
+CXXFLAGS=-O3 
 LIBDIR=../..
 TARGET=heat_equation
 OBJS=main.o

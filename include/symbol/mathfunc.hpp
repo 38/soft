@@ -44,8 +44,8 @@ namespace SpatialOps{
 	DEF_TYPE_INFERENCE_1ARG(exp, std::exp(_1));
 	DEF_TYPE_INFERENCE_1ARG(log, std::log(_1));
 	DEF_TYPE_INFERENCE_1ARG(sqrt, std::sqrt(_1));
-	DEF_TYPE_INFERENCE_2ARGS(min, std::min(_1, _2));
-	DEF_TYPE_INFERENCE_2ARGS(max, std::max(_1, _2));
+	DEF_TYPE_INFERENCE_2ARGS(min, std::min(_1 + _2, _2 + _1)); /* Because when we try to compute max(int, double) it breaks the compiler */
+	DEF_TYPE_INFERENCE_2ARGS(max, std::max(_1 + _2, _2 + _1));
 	
 }
 #endif
