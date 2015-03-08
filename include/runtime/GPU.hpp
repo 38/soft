@@ -1,5 +1,5 @@
 #include <map>
-#include <runtime/gpu_reduction.h>
+#include <runtime/GPUReduction.hpp>
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
