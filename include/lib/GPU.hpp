@@ -211,10 +211,9 @@ namespace SpatialOps{
 	struct GetExecutor<DEVICE_TYPE_CUDA>
 	{
 		template <typename Executable>
-		__device__ static inline void execute(int x, int y, int z, const void* e)
+		__device__ static inline typename Executable::CodeType::RetType execute(int x, int y, int z, const void* e)
 		{
-			typedef typename Executable::CodeType Code;
-			Code::eval(x, y, z, e);
+			return Executable::CodeType::eval(x, y, z, e);
 		}
 	};
 	/* Define the Preprocessor */

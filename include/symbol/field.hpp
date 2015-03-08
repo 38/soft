@@ -53,6 +53,23 @@ namespace SpatialOps{
 			              sizeof(T);
 			InvokeDeviceMM<>::notify_construct(_identifier, size);
 		}
+		const Field& operator=(const Field& f)
+		{
+			InvokeDeviceMM<>::notify_destruct(_identifier);
+			_identifier = f._identifier;
+			_high[0] = f._high[0];
+			_high[1] = f._high[1];
+			_high[2] = f._high[2];
+			_low[0] = f._low[0];
+			_low[1] = f._low[1];
+			_low[2] = f._low[2];
+			size_t size = (_high[0] - _low[0]) *
+			              (_high[1] - _low[1]) *
+			              (_high[2] - _low[2]) *
+			              sizeof(T);
+			InvokeDeviceMM<>::notify_construct(_identifier, size);
+			return f;
+		}
 		inline const char* name() const
 		{
 			static char _buf[100];
@@ -83,7 +100,7 @@ namespace SpatialOps{
 			InvokeDeviceMM<DeviceId>::set_timestamp(_identifier, ++_timestamp);
 			return ret;
 		}
-		inline int getid(){return _identifier;}
+		inline int getid() const {return _identifier;}
 		
 		inline void print() const
 		{

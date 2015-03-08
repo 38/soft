@@ -1,4 +1,5 @@
 #include <map>
+#include <runtime/gpu_reduction.h>
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
@@ -74,17 +75,21 @@ namespace GPURuntime{
 				return true;
 			}
 		};
-		/*
-		 * TODO for GPU REDUCTION
-		template <typename Expr, typename Executable, typename ParamType>
-		struct Executor<symbol_annotation<Expr, gpu_reduction_annotation>, Executable, ParamType>{
+		template <typename Expr, typename Executable, typename ParamType, template <typename, typename> class BinOp, typename SrcField>
+		struct Executor<symbol_annotation<Expr, annotation_gpu_reduction<BinOp, SrcField> >, Executable, ParamType>{
 		    static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
 		    {
-		        if(gpu_reduction_annotation::Valid == 0 ||
+				if(!annotation_gpu_reduction<BinOp, SrcField>::Valid || s.operand.operand_l.operand.getid() != s.operand.operand_r.operand_l.operand.getid())
+				{
+					return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
+				}
+
+				puts("TODO: Reduction!");
+				return true;
 		           
 	        }
 		
-	    };*/
+	    };
 		template<typename Executable, typename ParamType>
 		static inline bool execute(const ParamType& e, const typename Executable::Symbol& s)
 		{
