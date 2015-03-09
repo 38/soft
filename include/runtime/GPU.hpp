@@ -1,5 +1,7 @@
 #include <map>
-#include <runtime/GPUReduction.hpp>
+
+#define GPU_REDUCTION_GRID_SIZE 64
+
 #ifndef __RUNTIME_GPU_HPP__
 #define __RUNTIME_GPU_HPP__
 namespace GPURuntime{
@@ -8,6 +10,9 @@ namespace GPURuntime{
 	struct GPUParamWrap{
 		char data[sizeof(Param)];
 	};
+
+#include <runtime/GPUReduction.hpp>
+
 	template <typename Executable, typename ParamType>
 	__global__ void execute_kernel(const GPUParamWrap<ParamType> e, int lx, int ly, int lz, int hx, int hy, int hz)
 	{
@@ -83,10 +88,8 @@ namespace GPURuntime{
 				{
 					return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
 				}
-
-				puts("TODO: Reduction!");
-				return true;
-		           
+				puts("Fixme: Use the GPU Reduction Kernel");
+				return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
 	        }
 		
 	    };
