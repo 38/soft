@@ -1,7 +1,7 @@
 # The reason why I write such a script is I think the best way for the indentation is 
 # mixing spaces with tabs. A lot of people suggest that we should totally use space 
-# However, this increase the size of the source code and makes other unconforatble 
-# with the "hard indentation". When I have a smaller screen, I need the tabstop become
+# However, this increase the size of the source code and makes other uncomfortable 
+# with the "hard indentation". When I have a smaller screen, I need the TABSTOP become
 # smaller, however the space approach fail to do this.
 # So I think the good way for indentation is use tabs for indentation, use space for 
 # alignment. 

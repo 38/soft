@@ -1,9 +1,9 @@
-#ifndef __GPULIB_HPP__
-#define __GPULIB_HPP__
+#ifndef __LIB_CUDA_LIB_HPP__
+#define __LIB_CUDA_LIB_HPP__
 #include <algorithm>
 #include <cmath>
 using namespace SpatialOps;
-namespace GPULib{
+namespace CUDALib{
 	
 	/* This Lib actuall generates the code */
 	template <typename Symbol>
@@ -141,7 +141,7 @@ namespace GPULib{
 	
 	
 	
-	#define GPU_SCALAR_RULE_2ARGS(sym, expr)\
+	#define CUDA_SCALAR_RULE_2ARGS(sym, expr)\
 	template<typename left, typename right>\
 	struct ScalarLib<REFSYM(sym)<left, right> >{\
 		typedef typename ExprTypeInfer<left>::R LType;\
@@ -153,7 +153,7 @@ namespace GPULib{
 		}\
 	}
 	
-	#define GPU_SCALAR_RULE_1ARG(sym, expr)\
+	#define CUDA_SCALAR_RULE_1ARG(sym, expr)\
 	template<typename Operand>\
 	struct ScalarLib<REFSYM(sym)<Operand> >{\
 		typedef typename ExprTypeInfer<Operand>::R OPType;\
@@ -165,38 +165,38 @@ namespace GPULib{
 	}
 	
 	/* Basic Operators */
-	GPU_SCALAR_RULE_2ARGS(add, _1 + _2);
-	GPU_SCALAR_RULE_2ARGS(sub, _1 - _2);
-	GPU_SCALAR_RULE_2ARGS(mul, _1 * _2);
-	GPU_SCALAR_RULE_2ARGS(div, _1 / _2);
-	GPU_SCALAR_RULE_2ARGS(and, _1 & _2);
-	GPU_SCALAR_RULE_2ARGS(or, _1 | _2);
-	GPU_SCALAR_RULE_2ARGS(xor, _1 ^ _2);
-	GPU_SCALAR_RULE_2ARGS(assign, _1 = _2);
-	GPU_SCALAR_RULE_1ARG (neg, -_1);
-	GPU_SCALAR_RULE_1ARG (not, ~_1);
+	CUDA_SCALAR_RULE_2ARGS(add, _1 + _2);
+	CUDA_SCALAR_RULE_2ARGS(sub, _1 - _2);
+	CUDA_SCALAR_RULE_2ARGS(mul, _1 * _2);
+	CUDA_SCALAR_RULE_2ARGS(div, _1 / _2);
+	CUDA_SCALAR_RULE_2ARGS(and, _1 & _2);
+	CUDA_SCALAR_RULE_2ARGS(or, _1 | _2);
+	CUDA_SCALAR_RULE_2ARGS(xor, _1 ^ _2);
+	CUDA_SCALAR_RULE_2ARGS(assign, _1 = _2);
+	CUDA_SCALAR_RULE_1ARG (neg, -_1);
+	CUDA_SCALAR_RULE_1ARG (not, ~_1);
 	
-	GPU_SCALAR_RULE_2ARGS(lt, _1 < _2);
-	GPU_SCALAR_RULE_2ARGS(gt, _1 > _2);
-	GPU_SCALAR_RULE_2ARGS(eq, _1 == _2);
-	GPU_SCALAR_RULE_2ARGS(le, _1 <= _2);
-	GPU_SCALAR_RULE_2ARGS(ge, _1 >= _2);
-	GPU_SCALAR_RULE_2ARGS(ne, _1 != _2);
+	CUDA_SCALAR_RULE_2ARGS(lt, _1 < _2);
+	CUDA_SCALAR_RULE_2ARGS(gt, _1 > _2);
+	CUDA_SCALAR_RULE_2ARGS(eq, _1 == _2);
+	CUDA_SCALAR_RULE_2ARGS(le, _1 <= _2);
+	CUDA_SCALAR_RULE_2ARGS(ge, _1 >= _2);
+	CUDA_SCALAR_RULE_2ARGS(ne, _1 != _2);
 	
 	/* Math Functions */
-	GPU_SCALAR_RULE_1ARG(sin, std::sin((double)_1));
-	GPU_SCALAR_RULE_1ARG(cos, std::cos((double)_1));
-	GPU_SCALAR_RULE_1ARG(tan, std::tan((double)_1));
-	GPU_SCALAR_RULE_1ARG(asin, std::asin((double)_1));
-	GPU_SCALAR_RULE_1ARG(acos, std::acos((double)_1));
-	GPU_SCALAR_RULE_1ARG(atan, std::atan((double)_1));
-	GPU_SCALAR_RULE_1ARG(abs, std::abs((double)_1));
-	GPU_SCALAR_RULE_1ARG(exp, std::exp((double)_1));
-	GPU_SCALAR_RULE_1ARG(log, std::log((double)_1));
-	GPU_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
+	CUDA_SCALAR_RULE_1ARG(sin, std::sin((double)_1));
+	CUDA_SCALAR_RULE_1ARG(cos, std::cos((double)_1));
+	CUDA_SCALAR_RULE_1ARG(tan, std::tan((double)_1));
+	CUDA_SCALAR_RULE_1ARG(asin, std::asin((double)_1));
+	CUDA_SCALAR_RULE_1ARG(acos, std::acos((double)_1));
+	CUDA_SCALAR_RULE_1ARG(atan, std::atan((double)_1));
+	CUDA_SCALAR_RULE_1ARG(abs, std::abs((double)_1));
+	CUDA_SCALAR_RULE_1ARG(exp, std::exp((double)_1));
+	CUDA_SCALAR_RULE_1ARG(log, std::log((double)_1));
+	CUDA_SCALAR_RULE_1ARG(sqrt, std::sqrt((double)_1));
 	
-	GPU_SCALAR_RULE_2ARGS(max, (_1 > _2)?_1:_2);
-	GPU_SCALAR_RULE_2ARGS(min, (_1 < _2)?_1:_2);
+	CUDA_SCALAR_RULE_2ARGS(max, (_1 > _2)?_1:_2);
+	CUDA_SCALAR_RULE_2ARGS(min, (_1 < _2)?_1:_2);
 	
 }
 namespace SpatialOps{
@@ -204,7 +204,7 @@ namespace SpatialOps{
 	template <typename Expr, typename Executable>
 	struct InvokeDeviceLibrary<DEVICE_TYPE_CUDA, Expr, Executable>
 	{
-		typedef GPULib::Lib<Expr, Executable> R;
+		typedef CUDALib::Lib<Expr, Executable> R;
 	};
 	/* Define the Executor */
 	template <>
@@ -223,16 +223,16 @@ namespace SpatialOps{
 	struct ValidateReduction{
 		enum{R = 0};
 	};
-	#define GPU_VALID_REDUCTION(name) template<> struct ValidateReduction<REFSYM(name)>{enum{R = 1};}
-	GPU_VALID_REDUCTION(add);
-	GPU_VALID_REDUCTION(mul);
-	GPU_VALID_REDUCTION(and);
-	GPU_VALID_REDUCTION(or);
-	GPU_VALID_REDUCTION(xor);
-	GPU_VALID_REDUCTION(max);
-	GPU_VALID_REDUCTION(min);
+	#define CUDA_VALID_REDUCTION(name) template<> struct ValidateReduction<REFSYM(name)>{enum{R = 1};}
+	CUDA_VALID_REDUCTION(add);
+	CUDA_VALID_REDUCTION(mul);
+	CUDA_VALID_REDUCTION(and);
+	CUDA_VALID_REDUCTION(or);
+	CUDA_VALID_REDUCTION(xor);
+	CUDA_VALID_REDUCTION(max);
+	CUDA_VALID_REDUCTION(min);
 	
-	/* The annotation for the GPU Reduction */
+	/* The annotation for the CUDA Reduction */
 	template<template <typename, typename> class BinOp, typename Expr>
 	struct annotation_gpu_reduction{
 		typedef typename ExprTypeInfer<Expr>::R RetType;
@@ -241,10 +241,10 @@ namespace SpatialOps{
 		};
 		__device__ static inline RetType exec(const RetType& l, const RetType& r)
 		{
-			return GPULib::ScalarLib<symbol_add<RetType, RetType> >::eval(r, r);
+			return CUDALib::ScalarLib<symbol_add<RetType, RetType> >::eval(r, r);
 		}
 	};
-	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the GPU Reduction symbol */
+	/* Ok, we want to change the LVScalar_A <<= LVScalar_A + SExpr to the CUDA Reduction symbol */
 	template <template <typename, typename> class BinOp, typename ResultT, typename SExpr>
 	struct InvokeDevicePP<DEVICE_TYPE_CUDA, REFSYM(assign)<LValueScalar<ResultT>, BinOp<LValueScalar<ResultT> , SExpr> > >
 	{

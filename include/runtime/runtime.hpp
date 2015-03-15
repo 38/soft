@@ -36,7 +36,7 @@ namespace SpatialOps{
 	struct DataValidator<DeviceId, Executable<Field<T>, DeviceId, Env, offset>, 0>{
 		static inline bool validate(void* e, const Field<T>& s)
 		{
-			bool result = ((typename Executable<Field<T>, DeviceId, Env, offset>::Self*)e)->_m = s.template get_memory<DeviceId>();
+			bool result = (NULL != (((typename Executable<Field<T>, DeviceId, Env, offset>::Self*)e)->_m = s.template get_memory<DeviceId>()));
 			if(!result)
 			{
 				fprintf(stderr, "Can not allocate memory on device %d\n", DeviceId);
@@ -52,7 +52,6 @@ namespace SpatialOps{
 	template <int DevId, typename SymExpr>
 	struct SymExprExecutor{
 		static inline bool execute_symexpr(const SymExpr& expr){
-			//typedef typeof(link<DevId>(expr)) Exec;
 			typedef Linker<DevId, SymExpr> LinkerType;
 			typedef typename LinkerType::Exec Exec;
 			typename LinkerType::CodeType e;

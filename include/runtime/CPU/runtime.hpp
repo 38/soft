@@ -1,16 +1,16 @@
-#include <map>
-#ifndef __RUNTIME_CPU_HPP__
-#define __RUNTIME_CPU_HPP__
+#ifndef __RUNTIME_CPU_RUNTIME_HPP__
+#define __RUNTIME_CPU_RUNTIME_HPP__
 namespace CPURuntime{
 	struct CPURunTimeEnv{
 		typedef void* DeviceMemory;
-		static inline void* allocate(unsigned size)
+		static inline DeviceMemory allocate(unsigned size)
 		{
 			return malloc(size);
 		}
-		static inline void deallocate(DeviceMemory mem)
+		static inline bool deallocate(DeviceMemory mem)
 		{
 			free(mem);
+			return true;
 		}
 		static inline DeviceMemory get_null_pointer()
 		{
@@ -20,18 +20,20 @@ namespace CPURuntime{
 		{
 			return (ptr != NULL);
 		}
-		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size) {}
-		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size){}
 		
-		template <typename Executable> struct AnnotationHandler{
-			template<typename T> static inline bool run(const T&a, const typename T::Symbol&b){return true;}
-		};
+		static inline bool copy_from_host(DeviceMemory dest, void* sour, unsigned size)
+		{
+			return true;
+		}
+		
+		static inline bool copy_to_host(void* dest, DeviceMemory sour, unsigned size)
+		{
+			return true;
+		}
+		
 		template <typename Executable, typename Param>
 		static bool execute(const Param& e, const typename Executable::Symbol& s)
 		{
-			/* you can add annotation handler here
-			 * AnnotationHandler<typename Executable::Symbol>::run(e, s);
-			 */
 			int lx, ly, lz, hx, hy, hz;
 			GetRange<typename Executable::Symbol, EmptyEnv>::get_range(s, lx, ly, lz, hx, hy, hz);
 			/* Check if this formular is trying to do an infinity loop, just do the action on 0 */
@@ -39,9 +41,9 @@ namespace CPURuntime{
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
 			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
 			/* do the actual ops */
-			for(int x = lx; x < hx; x ++)
+			for(int z = lz; z < hz; z ++)
 			    for(int y = ly; y < hy; y ++)
-			        for(int z = lz; z < hz; z ++)
+			        for(int x = lx; x < hx; x ++)
 			            GetExecutor<DEVICE_TYPE_CPU>::template execute<Executable>(x, y, z, e);
 			return true;
 		}

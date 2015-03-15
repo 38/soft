@@ -25,8 +25,8 @@ int main()
 	LValueScalar<double> deltaT;
 	
 	/* For some constant field, we don't need to allocate a field, we can evaluate on the fly */
-	DEFINE_FORMULA(alpha, 1);
-
+	DEFINE_EXPRESSION(alpha, 1);
+	
 	/* Reduction */
 	deltaT <<= INT_MAX;
 	deltaT <<= min(deltaT, alpha);
@@ -34,7 +34,7 @@ int main()
 	
 	phi <<= 5.0;
 	set_boundary(phi);
-
+	
 	/* Do the iteration! */
 	int nSteps = 40;
 	for(int i = 0; i < nSteps; i ++)
@@ -45,9 +45,9 @@ int main()
 		phi <<= phi + deltaT * rhs;
 		set_boundary(phi);
 	}
-
+	
 	printf("The result temperature field after %d iterations:\n\n", nSteps);
-	phi.print();
-
+	phi.print(std::cout);
+	
 	return 0;
 }

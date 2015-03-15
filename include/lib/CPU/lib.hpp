@@ -1,5 +1,5 @@
-#ifndef __CPULIB_HPP__
-#define __CPULIB_HPP__
+#ifndef __LIB_CPU_LIB_HPP__
+#define __LIB_CPU_LIB_HPP__
 #include <algorithm>
 #include <cmath>
 using namespace SpatialOps;

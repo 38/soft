@@ -4,15 +4,17 @@
 #ifndef __SPATIALOPS_HPP__
 #define __SPATIALOPS_HPP__
 
+/* helper types */
+#include <util/static_vars.hpp>
 
 /* configuration */
 #include <configure/devices.hpp>
 
 /* device management */
-#include <util/device_manager.hpp>
+#include <runtime/device_manager.hpp>
 
 /* memory management */
-#include <util/memory_manager.hpp>
+#include <runtime/memory_manager.hpp>
 
 /* environ uitls */
 #include <util/environ.hpp>
@@ -39,20 +41,32 @@
 #include <linker/linker.hpp>
 
 /* the CPU Library */
-#include <lib/CPU.hpp>
+#include <lib/CPU/lib.hpp>
 
 /* the CUDA Library */
 #ifdef __CUDACC__
-#include <lib/GPU.hpp>
+#include <lib/CUDA/lib.hpp>
 #endif
 
-/* runtime environment */
+/* basic types for runtime environment */
 #include <runtime/runtime.hpp>
-#include <runtime/CPU.hpp>
+
+/* set up the CPU runtime */
+#include <runtime/CPU/runtime.hpp>
 
 #ifdef __CUDACC__
-#include <runtime/GPU.hpp>
+/* set up the GPU runtime */
+#include <runtime/CUDA/runtime.hpp>
 #endif
 
-#define DEFINE_FORMULA(name, expr) typeof(expr) name = expr
+/* Define helper macros */
+/**
+ * @brief Define a named symbolic expression, this is useful when you
+ *        want to use a result of an expression again and again, instead
+ *        of allocating a memory for the result of this epxression,
+ *        you can make it a runtime generated value
+ * @param name the name of this expression
+ * @param expr the expression
+ **/
+#define DEFINE_EXPRESSION(name, expr) typeof(expr) name = expr
 #endif

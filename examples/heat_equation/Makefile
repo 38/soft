@@ -1,4 +1,5 @@
-CXXFLAGS=-O3 
+CXX=g++
+CXXFLAGS=-g 
 LIBDIR=../..
 TARGET=heat_equation
 OBJS=main.o

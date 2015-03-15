@@ -93,7 +93,7 @@ namespace SpatialOps{
 		TopLevelFlag<Expr>::clear(expr);
 		if(!SymExprExecutor<0, Expr>::execute_symexpr(expr))
 		{
-			fprintf(stderr, "failed to execute the expression!");
+			fprintf(stderr, "failed to execute the expression!\n");
 		}
 	}
 	template<>

@@ -1,20 +1,20 @@
 #include <map>
 
-#define GPU_REDUCTION_GRID_SIZE 64
 
-#ifndef __RUNTIME_GPU_HPP__
-#define __RUNTIME_GPU_HPP__
-namespace GPURuntime{
-	/* This Wrap type can make all runtime data copy to the GPU when launching kernel function */
+#ifndef __RUNTIME_CUDA_RUNTIME_HPP__
+#define __RUNTIME_CUDA_RUNTIME_HPP__
+namespace CUDARuntime{
+	#define CUDA_REDUCTION_GRID_SIZE 64
+	/* This Wrap type can make all runtime data copy to the CUDA when launching kernel function */
 	template <typename Param>
-	struct GPUParamWrap{
+	struct CUDAParamWrap{
 		char data[sizeof(Param)];
 	};
-
-#include <runtime/GPUReduction.hpp>
-
+	
+	#include <runtime/CUDA/CUDAReduction.hpp>
+	
 	template <typename Executable, typename ParamType>
-	__global__ void execute_kernel(const GPUParamWrap<ParamType> e, int lx, int ly, int lz, int hx, int hy, int hz)
+	__global__ void execute_kernel(const CUDAParamWrap<ParamType> e, int lx, int ly, int lz, int hx, int hy, int hz)
 	{
 		int x = lx + threadIdx.x + blockIdx.x * blockDim.x;
 		int y = ly + threadIdx.y + blockIdx.y * blockDim.y;
@@ -22,7 +22,7 @@ namespace GPURuntime{
 		
 		if(x < hx && y < hy && z < hz) GetExecutor<DEVICE_TYPE_CUDA>::execute<Executable>(x, y, z, &e);
 	}
-	struct GPURunTimeEnv{
+	struct CUDARunTimeEnv{
 		typedef void* DeviceMemory;
 		static inline void* allocate(unsigned size)
 		{
@@ -76,23 +76,23 @@ namespace GPURuntime{
 				               ceil(hy - ly, blockY),
 				               ceil(hz - lz, blockZ));
 				
-				execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(GPUParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
+				execute_kernel<Executable><<<block_dim, grid_dim, 0, 0>>>(*(CUDAParamWrap<ParamType>*)&e, lx, ly, lz, hx, hy, hz);
 				return true;
 			}
 		};
 		template <typename Expr, typename Executable, typename ParamType, template <typename, typename> class BinOp, typename SrcField>
 		struct Executor<symbol_annotation<Expr, annotation_gpu_reduction<BinOp, SrcField> >, Executable, ParamType>{
-		    static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
-		    {
+			static inline bool execute(const ParamType& e, const typename Executable::Symbol s)
+			{
 				if(!annotation_gpu_reduction<BinOp, SrcField>::Valid || s.operand.operand_l.operand.getid() != s.operand.operand_r.operand_l.operand.getid())
 				{
 					return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
 				}
-				puts("Fixme: Use the GPU Reduction Kernel");
-				return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
-	        }
-		
-	    };
+				//puts("Fixme: Use the CUDA Reduction Kernel");
+				//return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
+			}
+			
+		};
 		template<typename Executable, typename ParamType>
 		static inline bool execute(const ParamType& e, const typename Executable::Symbol& s)
 		{
@@ -103,7 +103,7 @@ namespace GPURuntime{
 namespace SpatialOps{
 	template <>
 	struct GetDeviceRuntimeEnv<DEVICE_TYPE_CUDA>{
-		typedef GPURuntime::GPURunTimeEnv R;
+		typedef CUDARuntime::CUDARunTimeEnv R;
 	};
 }
 #endif

@@ -23,8 +23,7 @@ namespace SpatialOps{
 		/**
 		 * @brief construct a field within the given range
 		 **/
-		Field(int lx, int ly, int lz,
-		      int hx, int hy, int hz)
+		Field(int lx, int ly, int lz, int hx, int hy, int hz)
 		{
 			_high[0] = hx;
 			_high[1] = hy;
@@ -102,7 +101,8 @@ namespace SpatialOps{
 		}
 		inline int getid() const {return _identifier;}
 		
-		inline void print() const
+		template<typename OutStream>
+		inline void print(OutStream& os) const
 		{
 			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
 			int lx, ly, lz, hx, hy, hz;
@@ -112,12 +112,12 @@ namespace SpatialOps{
 				for(int y = ly; y < hy; y ++)
 				{
 					for(int x = lx; x < hx; x ++)
-					    std::cout << _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)] << '\t';
-					std::cout << std::endl;
+					    os << _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)] << '\t';
+					os << std::endl;
 				}
-				std::cout << std::endl;
+				os << std::endl;
 			}
-			std::cout << std::endl;
+			os << std::endl;
 		}
 		
 		private:
