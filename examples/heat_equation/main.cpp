@@ -39,7 +39,6 @@ int main()
 	int nSteps = 40;
 	for(int i = 0; i < nSteps; i ++)
 	{
-		/* Instead of the Stencil in Nebo, we use the let binding approach to solve the same problem */
 		rhs <<= let<X>(alpha,let<Y>(phi,(DivR<XDir>( Interp<XDir>(ref<X>()) * Div<XDir>(ref<Y>())) +
 		                                 DivR<YDir>( Interp<YDir>(ref<X>()) * Div<YDir>(ref<Y>()))) * SZ * SZ));
 		phi <<= phi + deltaT * rhs;

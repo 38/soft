@@ -1,6 +1,6 @@
 #ifndef __PRINT_BACKEND_HPP__
 #define __PRINT_BACKEND_HPP__
-/* printing backend */
+/* printing back-end */
 #include <typeinfo>
 namespace SpatialOps{
 	template <typename Expr, int NOperands>
@@ -60,6 +60,23 @@ namespace SpatialOps{
 			Print_Implemenation<typename Expr::Operand_l, GetNumOperands<typename Expr::Operand_l>::R> writer1(e.operand_l);
 			printf(",\n");
 			Print_Implemenation<typename Expr::Operand_r, GetNumOperands<typename Expr::Operand_r>::R> writer2(e.operand_r);
+			_level --;
+			puts("");
+			print_indentation();
+			printf("} /* %s */", e.name());
+		}
+	};
+	template <typename Expr>
+	struct Print_Implemenation<Expr, 3>{
+		Print_Implemenation(const Expr& e){
+			print_indentation();
+			printf("%s {\n", e.name());
+			_level ++;
+			Print_Implemenation<typename Expr::Operand_1, GetNumOperands<typename Expr::Operand_1>::R> writer1(e.operand_1);
+			printf(",\n");
+			Print_Implemenation<typename Expr::Operand_2, GetNumOperands<typename Expr::Operand_2>::R> writer2(e.operand_2);
+			printf(",\n");
+			Print_Implemenation<typename Expr::Operand_3, GetNumOperands<typename Expr::Operand_3>::R> writer3(e.operand_3);
 			_level --;
 			puts("");
 			print_indentation();

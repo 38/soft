@@ -36,15 +36,19 @@ namespace SpatialOps {
 				timestamp = ts;
 			}
 		};
+		
 		typedef svar<InvokeDeviceMM, std::map<int, MemoryMapValue*> > memory_map;
 		typedef svar<InvokeDeviceMM, bool> disable_memory_copy;
 		
-		/*static inline std::map<int, MemoryMapValue*>& get_memory_map()
+		static inline void disable_automatic_memcpy()
 		{
-		    static std::map<int, MemoryMapValue*> _memory_map;
-		    return _memory_map;
-	    }*/
+			disable_memory_copy::get() = false;
+		}
 		
+		static inline void enable_automatic_memcpy()
+		{
+			disable_memory_copy::get() = true;
+		}
 		
 		static inline void notify_construct(int id, unsigned size)
 		{
@@ -103,14 +107,15 @@ namespace SpatialOps {
 			/* get the CPU memory as buffer for transfer */
 			void* host_mem = InvokeDeviceMM<DEVICE_TYPE_CPU>::get_memory(id);
 			
-			/* then copy the device memory to cpu */
+			/* then copy the device memory to CPU */
 			if(uptodate_dev != (int)DEVICE_TYPE_CPU && !InvokeDeviceMM<0>::copy_to_host(id, uptodate_dev, host_mem))
-			        return false;
+			    return false;
 			
 			/* finally copy the host memory to target device */
 			if(DeviceType != (int)DEVICE_TYPE_CPU &&
 			   !GetDeviceRuntimeEnv<DeviceType>::R::copy_from_host(memory_map::get()[id]->mem, host_mem, memory_map::get()[id]->size))
 			    return false;
+			
 			return true;
 		}
 	};

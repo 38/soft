@@ -20,6 +20,27 @@ namespace SpatialOps{
 			Exec::init(PP::preprocess(symbolic_expr), mem);
 		}
 	};
+	template <template <typename, typename, typename> class Ternary, typename Op1, typename Op2, typename Op3, int DeviceId, typename Env, int offset>
+	struct Executable<Ternary<Op1, Op2, Op3>, DeviceId, Env, offset>{
+		struct Self{};
+		typedef Executable<Op1, DeviceId, Env, offset> OP1Type;
+		typedef Executable<Op2, DeviceId, Env, offset + SIZE_PADDING(OP1Type)> OP2Type;
+		typedef Executable<Op3, DeviceId, Env, offset + SIZE_PADDING(OP1Type) + SIZE_PADDING(OP2Type)> OP3Type;
+		typedef Ternary<Op1, Op2, Op3> Symbol;
+		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
+		static inline void init(const Symbol& _symbol, void* mem)
+		{
+			OP1Type::init(_symbol.operand_1, mem);
+			OP2Type::init(_symbol.operand_2, ((char*)mem) + SIZE_PADDING(OP1Type));
+			OP3Type::init(_symbol.operand_3, ((char*)mem) + SIZE_PADDING(OP1Type) + SIZE_PADDING(OP2Type));
+		}
+		enum{
+			_self = 0,
+			_1 = 0,
+			_2 = SIZE_PADDING(OP1Type),
+			_3 = SIZE_PADDING(OP1Type) + SIZE_PADDING(OP2Type)
+		};
+	};
 	template <template <typename ,typename> class BinSym, typename Left, typename Right, int DeviceId, typename Env, int offset>
 	struct Executable<BinSym<Left, Right>, DeviceId, Env, offset>{
 		struct Self{};
@@ -28,8 +49,6 @@ namespace SpatialOps{
 		typedef BinSym<Left, Right> Symbol;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = SIZE_PADDING(OP1Type) + (int)OP2Type::Size};
-		/*OP1Type _1;
-		OP2Type _2;*/
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			OP1Type::init(_symbol.operand_l, mem);
@@ -48,7 +67,6 @@ namespace SpatialOps{
 		typedef UniSym<Operand> Symbol;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = (int)OP1Type::Size};
-		//OP1Type _1;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			OP1Type::init(_symbol.operand, mem);
@@ -64,10 +82,8 @@ namespace SpatialOps{
 		typedef Symbol Self;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = sizeof(Symbol)};
-		//Symbol _s;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
-			//new (mem) Symbol(_symbol);
 			*(Symbol*)mem = _symbol;
 		}
 		enum{
@@ -83,7 +99,6 @@ namespace SpatialOps{
 			T* _m;
 			int lx, ly, lz, hx, hy, hz;
 		};
-		//Self
 		enum{Size = sizeof(Self)};
 		static inline void init(const Symbol& _symbol, void* mem){
 			Self* self = (Self*) mem;
@@ -105,8 +120,6 @@ namespace SpatialOps{
 			RetType defval;
 		};
 		enum{Size = SIZE_PADDING(OP1Type) + sizeof(Self)};
-		//OP1Type _1;
-		//Self;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			Self* self = (Self*)(((char*)mem) + SIZE_PADDING(OP1Type));
@@ -138,7 +151,6 @@ namespace SpatialOps{
 		typedef Executable<Operand, DeviceId, Env, offset> OP1Type;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = (int)OP1Type::Size};
-		//OP1Type _1;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			OP1Type::init(_symbol.operand, mem);
@@ -174,8 +186,6 @@ namespace SpatialOps{
 		typedef Executable<Op2, DeviceId, NewEnv, offset + SIZE_PADDING(OP1Type)> OP2Type;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = SIZE_PADDING(OP1Type) + (int)OP2Type::Size};
-		//OP1Type _1;
-		//OP2Type _2;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			OP1Type::init(_symbol.operand_l, mem);
@@ -209,7 +219,6 @@ namespace SpatialOps{
 		typedef Executable<typename Symbol::Operand, DeviceId, Env, offset> OP1Type;
 		typedef typename InvokeDeviceLibrary<DeviceId, Symbol, Executable>::R CodeType;
 		enum{Size = (int)OP1Type::Size};
-		//OP1Type _1;
 		static inline void init(const Symbol& _symbol, void* mem)
 		{
 			OP1Type::init(_symbol.operand, mem);

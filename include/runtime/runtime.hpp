@@ -9,6 +9,24 @@ namespace SpatialOps{
 		}
 	};
 	template <int DevId, typename Executable>
+	struct DataValidator<DevId, Executable, 3>{
+		static inline bool validate(void* e, const typename Executable::Symbol& s)
+		{
+			return DataValidator<DevId,
+			                     typename Executable::OP1Type,
+			                     GetNumOperands<typename Executable::Symbol::Operand_1>::R
+			                    >::validate(((char*)e) + (int)Executable::_1, s.operand_1) &&
+			       DataValidator<DevId,
+			                     typename Executable::OP2Type,
+			                     GetNumOperands<typename Executable::Symbol::Operand_r>::R
+			                    >::validate(((char*)e) + (int)Executable::_2, s.operand_2) &&
+			       DataValidator<DevId,
+			                        typename Executable::OP3Type,
+			                     GetNumOperands<typename Executable::Symbol::Operand_2>::R
+			                    >::validate(((char*)e) + (int)Executable::_3, s.operand_3);
+		}
+	};
+	template <int DevId, typename Executable>
 	struct DataValidator<DevId, Executable, 2>{
 		static inline bool validate(void* e, const typename Executable::Symbol& s)
 		{

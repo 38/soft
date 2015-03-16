@@ -1,43 +1,16 @@
-/**
- * @brief the top level file for syntax library, define
- *
- *        the template interface for the syntax description
- * @detail In the syntax description part, your C++ expression will be converted in to a
- *         *Symbolic Expression*, which is a tree strcture of symbolic types.
- *         This result can carries all the information that is needed to run, but
- *         it does not contains any code to execute.
- *         After that the linker will look for the library and figure out what code to use
- *         for each symbol and produce a actually runnable code.
- *         In the symbolic expression phrase, we do not check the type compatibility of the
- *         expression. But the error can finally be figured out during the linker generates
- *         the runtime code.
- * @file interface.hpp
- **/
 #include <stdio.h>
 #include <limits.h>
 #ifndef __BASE_HPP__
 #define __BASE_HPP__
 namespace SpatialOps{
-	/**
-	 * @brief Get the Number of operands for an operator
-	 * @param Operator the operator that we what to query
-	 * @note  New operator that with non-zero operands should be specialized
-	 **/
+	
+	/* Get the number of operand of this operator */
 	template <typename Operator>
 	struct GetNumOperands{
-		enum{
-			R = 0   /* 0 by Default */
-		};
+		enum{R = 0};
 	};
-	/**
-	 * @brief Get the range of this operator
-	 * @details The range of the expression is determinded by the
-	 *         minmum range of each term.
-	 *         So that if this not apply, we should insert some
-	 *         window operator to extend or shrink the range
-	 * @param Expr the expression to query
-	 * @note  Operator that with finte range should rewrite this
-	 **/
+	
+	/* Get the range of this expression */
 	template <typename Expr, typename Env>
 	struct GetRange{
 		static inline void get_range(const Expr& e, int& lx, int& ly, int& lz, int& hx, int& hy, int& hz)
@@ -46,47 +19,32 @@ namespace SpatialOps{
 			hx = hy = hz = INT_MAX;
 		}
 	};
-	/**
-	 * @brief Check/Set the flag for top-level expressions
-	 **/
+	
+	/* Get/Set the top level flag */
 	template <class Expr>
 	struct TopLevelFlag{
 		static inline bool get(const Expr& e){ return false;}
 		static inline void clear(const Expr& e){}
 	};
-	/**
-	 * @brief Infer the type of an symbolic expression
-	 **/
+	
+	/* Infer the return type of the expression  */
 	template <class Expr>
 	struct ExprTypeInfer{
 		typedef Expr R;
 	};
-	/**
-	 * @brief Type for X-Direction
-	 **/
-	struct XDir{};
-	/**
-	 * @brief Type for Y-Direction
-	 **/
-	struct YDir{};
-	/**
-	 * @brief Type for Z-Direction
-	 **/
-	struct ZDir{};
-	/**
-	 * @brief Convert the direction type to a spatial vector
-	 * @param D the direction
-	 **/
-	template<typename D>
-	struct GetDirectVec;
 	
-	/******************
-	* Implementations*
-	******************/
-	/**
-	 * @brief run this symbolic expression
-	 **/
+	/* Directions */
+	struct XDir{};
+	struct YDir{};
+	struct ZDir{};
+	
+	/* Get The Direction */
+	template<typename D> struct GetDirectVec;
+	
+	/* Execute the symbol */
 	template <int DevId, typename SymExpr> struct SymExprExecutor;
+	
+	/* Run the symbolic expression */
 	template <class Expr>
 	static inline void run(const Expr& expr)
 	{
@@ -96,6 +54,7 @@ namespace SpatialOps{
 			fprintf(stderr, "failed to execute the expression!\n");
 		}
 	}
+	
 	template<>
 	struct GetDirectVec<XDir>{
 		enum{
@@ -120,29 +79,30 @@ namespace SpatialOps{
 			Z = 1
 		};
 	};
+	
+	struct SymbolicExpression{
+		bool top_level;
+		SymbolicExpression():top_level(true){}
+		SymbolicExpression(const SymbolicExpression&):top_level(false){}
+	};
+	
+	template <bool runnable>
+	struct SymbolDestruction{
+		template<typename symexp>
+		static inline void invoke(const symexp& expr)
+		{
+			run(expr);
+		}
+	};
+	template <>
+	struct SymbolDestruction<false>{
+		template<typename symexp>
+		static inline void invoke(const symexp& expr)
+		{}
+	};
 }
 
-struct SymbolicExpression{
-	bool top_level;
-	SymbolicExpression():top_level(true){}
-	SymbolicExpression(const SymbolicExpression&):top_level(false){}
-};
-
-template <bool runnable>
-struct SymbolDestruction{
-	template<typename symexp>
-	static inline void invoke(const symexp& expr)
-	{
-		run(expr);
-	}
-};
-template <>
-struct SymbolDestruction<false>{
-	template<typename symexp>
-	static inline void invoke(const symexp& expr)
-	{}
-};
-/* Define a symbol with 1 arg */
+/* Define a symbol with 1 argument */
 #define DEF_SYMBOL_1ARG(id, runnable) \
         template <typename op>\
         struct symbol_##id: public SymbolicExpression{\
@@ -181,7 +141,7 @@ struct SymbolDestruction<false>{
 	        }\
         }
 
-/* define a symbol with 2 args */
+/* define a symbol with 2 arguments */
 #define DEF_SYMBOL_2ARGS(id, runnable) \
         template <typename left, typename right>\
         struct symbol_##id: public SymbolicExpression{\
@@ -254,7 +214,7 @@ struct SymbolDestruction<false>{
 	        return REFSYM(id)<left, right>(l, r);\
         }
 
-/* define a default uniary operator */
+/* define a default unary operator */
 #define DEF_DEFAULT_OPERAND_1ARG(id) \
         template <typename TOperand>\
         REFSYM(id)<TOperand> id(const TOperand& operand)\
@@ -273,7 +233,7 @@ struct SymbolDestruction<false>{
 	    static RightType &_2;\
 	    typedef typeof(infer_expr) R;\
     }
-/* Define a type-inference rule for a uniary operator */
+/* Define a type-inference rule for a unary operator */
 #define DEF_TYPE_INFERENCE_1ARG(id, infer_expr)\
     template<typename TOperand>\
     struct ExprTypeInfer<REFSYM(id)<TOperand> >{\
