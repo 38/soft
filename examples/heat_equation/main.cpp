@@ -1,6 +1,6 @@
 #include <spatialops.hpp>
 using namespace SpatialOps;
-#define SZ 6
+#define SZ 400
 const double deltaX = 1.0/SZ;
 const double deltaY = 1.0/SZ;
 const double sqrdDeltaX = deltaX * deltaX;
@@ -36,7 +36,7 @@ int main()
 	set_boundary(phi);
 	
 	/* Do the iteration! */
-	int nSteps = 40;
+	int nSteps = 1000;
 	for(int i = 0; i < nSteps; i ++)
 	{
 		rhs <<= let<X>(alpha,let<Y>(phi,(DivR<XDir>( Interp<XDir>(ref<X>()) * Div<XDir>(ref<Y>())) +

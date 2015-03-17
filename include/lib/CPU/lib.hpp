@@ -5,7 +5,7 @@
 using namespace SpatialOps;
 namespace CPULib{
 	
-	/* This Lib actuall generates the code */
+	/* This Lib actual generates the code */
 	template <typename Symbol>
 	struct ScalarLib;
 	
@@ -22,9 +22,14 @@ namespace CPULib{
 	template <typename Expr, typename Executable>
 	struct Lib
 	{
-		static inline Expr eval(int x, int y, int z, const void* e)
+		typedef svar<Lib, Expr> arg;
+		static inline void load_arg(const void* e)
 		{
-			return get_self<Executable>(e);
+			arg::get() = get_self<Executable>(e);
+		}
+		static inline Expr eval(int x, int y, int z)
+		{
+			return arg::get();
 		}
 	};
 	template <template <typename, typename, typename> class Symbol, typename Op1, typename Op2, typename Op3, typename Executable>
@@ -33,12 +38,18 @@ namespace CPULib{
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename Executable::OP3Type::CodeType T3;
 		typedef typename ExprTypeInfer<Symbol<Op1, Op2, Op3> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
+		{
+			T1::load_arg(get_operand_1<Executable>(e));
+			T2::load_arg(get_operand_2<Executable>(e));
+			T3::load_arg(get_operand_3<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
 		{
 			return ScalarLib<Symbol<Op1, Op2, Op3> >::template eval<RetType>(
-			        T1::eval(x, y, z, get_operand_1<Executable>(e)),
-			        T2::eval(x, y, z, get_operand_2<Executable>(e)),
-			        T3::eval(x, y, z, get_operand_3<Executable>(e)));
+			        T1::eval(x, y, z),
+			        T2::eval(x, y, z),
+			        T3::eval(x, y, z));
 		}
 	};
 	template <template <typename, typename> class Symbol, typename left, typename right, typename Executable>
@@ -46,11 +57,16 @@ namespace CPULib{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename ExprTypeInfer<Symbol<left, right> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
+		{
+			T1::load_arg(get_operand_1<Executable>(e));
+			T2::load_arg(get_operand_2<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
 		{
 			return ScalarLib<Symbol<left, right> >::template eval<RetType>(
-			        T1::eval(x, y, z, get_operand_1<Executable>(e)),
-			        T2::eval(x, y, z, get_operand_2<Executable>(e)));
+			        T1::eval(x, y, z),
+			        T2::eval(x, y, z));
 		}
 	};
 	
@@ -58,18 +74,27 @@ namespace CPULib{
 	struct Lib<Symbol<Operand>, Executable>{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<Symbol<Operand> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
 		{
-			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, get_operand_1<Executable>(e)));
+			T1::load_arg(get_operand_1<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z));
 		}
 	};
 	
 	template <typename T, typename Executable>
 	struct Lib<Field<T>, Executable>{
 		typedef T& RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		typedef svar<Lib, typename Executable::Self> arg;
+		static inline void load_arg(const void* e)
 		{
-			const typename Executable::Self s = get_self<Executable>(e);
+			arg::get() = get_self<Executable>(e);
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			const typename Executable::Self& s = arg::get();
 			return s._m[(x - s.lx) + (y - s.ly) * (s.hx - s.lx) + (z - s.lz) * (s.hx - s.lx) * (s.hy - s.ly)];
 		}
 	};
@@ -78,7 +103,11 @@ namespace CPULib{
 	struct Lib<REFSYM(coordinate)<Dir> , Executable>{
 		typedef typename Executable::Symbol S;
 		typedef int RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
+		{
+			
+		}
+		static inline RetType eval(int x, int y, int z)
 		{
 			return (int)S::X * x + (int)S::Y * y + (int)S::Z * z;
 		}
@@ -89,12 +118,15 @@ namespace CPULib{
 		typedef typename Executable::Symbol S;
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(shift)<Operand, dx, dy, dz> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
+		{
+			T1::load_arg(get_operand_1<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
 		{
 			return T1::eval(x + (int)S::Dx,
 			                y + (int)S::Dy,
-			                z + (int)S::Dz,
-			                get_operand_1<Executable>(e));
+			                z + (int)S::Dz);
 		}
 	};
 	
@@ -102,43 +134,60 @@ namespace CPULib{
 	struct Lib<REFSYM(window)<Operand>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(window)<Operand> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		typedef svar<Lib, typename Executable::Self> arg;
+		static inline void load_arg(const void* e)
 		{
-			const typename Executable::Self s = get_self<Executable>(e);
-			const void* _1 = get_operand_1<Executable>(e);
+			arg::get() = get_self<Executable>(e);
+			T1::load_arg(get_operand_1<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			const typename Executable::Self& s = arg::get() ;
 			return
 			((s.lx <= x && x < s.hx) &&
 			 (s.ly <= y && y < s.hy) &&
-			 (s.lz <= z && z < s.hz))?T1::eval(x, y, z, _1):s.defval;
+			 (s.lz <= z && z < s.hz))?T1::eval(x, y, z):s.defval;
 		}
 	};
 	template <typename T, typename Executable>
 	struct Lib<LValueScalar<T>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<LValueScalar<T> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
 		{
-			return T1::eval(0,0,0,get_operand_1<Executable>(e));
+			T1::load_arg(get_operand_1<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			return T1::eval(0,0,0);
 		}
 	};
 	
 	template <typename Var, typename Op1, typename Op2, typename Executable>
 	struct Lib<REFSYM(binding)<Var, Op1, Op2>, Executable>{
+		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename ExprTypeInfer<Op2>::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
 		{
-			return T2::eval(x,y,z,get_operand_2<Executable>(e));
+			T1::load_arg(get_operand_1<Executable>(e));
+			T2::load_arg(get_operand_2<Executable>(e));
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			return T2::eval(x,y,z);
 		}
 	};
 	
 	template <typename Var, typename Executable>
 	struct Lib<REFSYM(ref)<Var>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
 		{
-			const void* target = (const void*)(((char*)e) + (int)Executable::Offset);
-			return Executable::Target::CodeType::eval(x,y,z, target);
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			return Executable::Target::CodeType::eval(x,y,z);
 		}
 	};
 	
@@ -146,9 +195,13 @@ namespace CPULib{
 	struct Lib<REFSYM(annotation)<Operand, Annotation>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(annotation)<Operand, Annotation> >::R RetType;
 		typedef typename Executable::OP2Type::CodeType T1;
-		static inline RetType eval(int x, int y, int z, const void* e)
+		static inline void load_arg(const void* e)
 		{
-			return T1::eval(x, y, z, e);
+			T1::load_arg(e);
+		}
+		static inline RetType eval(int x, int y, int z)
+		{
+			return T1::eval(x, y, z);
 		}
 	};
 	
@@ -235,9 +288,9 @@ namespace SpatialOps{
 	struct GetExecutor<DEVICE_TYPE_CPU>
 	{
 		template <typename Executable>
-		static inline typename Executable::CodeType::RetType execute(int x, int y, int z, const void* e)
+		static inline typename Executable::CodeType::RetType execute(int x, int y, int z)
 		{
-			return Executable::CodeType::eval(x, y, z, e);
+			return Executable::CodeType::eval(x, y, z);
 		}
 	};
 }

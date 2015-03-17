@@ -2,7 +2,7 @@
 #define __STATIC_VARS_HPP__
 namespace SpatialOps{
 	/**
-	 * @brief This class is used to build a static field that can hold without a cpp file
+	 * @brief This class is used to build a static field that can hold without a source code file
 	 **/
 	template <typename Parent, typename T>
 	struct svar{

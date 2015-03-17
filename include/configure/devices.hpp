@@ -16,7 +16,7 @@ enum DeviceType{
 	DEVICE_TYPE_CUDA,   /*!< Type for GPUs supports CUDA */
 	#endif /*__CUDACC__*/
 	
-	DEVICE_TYPE_CPU,    /*!< General CPUs backend */
+	DEVICE_TYPE_CPU,    /*!< General CPUs back-end */
 	
 	NUM_DEVICE_TYPES
 	/* NOTICE: ANY DEVICE DECLEARATION BEYOND THIS POINT WILL HAVE NO EFFECT */
