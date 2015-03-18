@@ -37,8 +37,8 @@ namespace SpatialOps {
 			}
 		};
 		
-		typedef svar<InvokeDeviceMM, std::map<int, MemoryMapValue*> > memory_map;
-		typedef svar<InvokeDeviceMM, bool> disable_memory_copy;
+		typedef StaticVar<InvokeDeviceMM, std::map<int, MemoryMapValue*> > memory_map;
+		typedef StaticVar<InvokeDeviceMM, bool> disable_memory_copy;
 		
 		static inline void disable_automatic_memcpy()
 		{

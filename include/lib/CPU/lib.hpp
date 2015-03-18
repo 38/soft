@@ -22,7 +22,7 @@ namespace CPULib{
 	template <typename Expr, typename Executable>
 	struct Lib
 	{
-		typedef svar<Lib, Expr> arg;
+		typedef StaticVar<Lib, Expr> arg;
 		static inline void load_arg(const void* e)
 		{
 			arg::get() = get_self<Executable>(e);
@@ -87,7 +87,7 @@ namespace CPULib{
 	template <typename T, typename Executable>
 	struct Lib<Field<T>, Executable>{
 		typedef T& RetType;
-		typedef svar<Lib, typename Executable::Self> arg;
+		typedef StaticVar<Lib, typename Executable::Self> arg;
 		static inline void load_arg(const void* e)
 		{
 			arg::get() = get_self<Executable>(e);
@@ -134,7 +134,7 @@ namespace CPULib{
 	struct Lib<REFSYM(window)<Operand>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(window)<Operand> >::R RetType;
-		typedef svar<Lib, typename Executable::Self> arg;
+		typedef StaticVar<Lib, typename Executable::Self> arg;
 		static inline void load_arg(const void* e)
 		{
 			arg::get() = get_self<Executable>(e);

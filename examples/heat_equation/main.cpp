@@ -1,6 +1,6 @@
 #include <spatialops.hpp>
 using namespace SpatialOps;
-#define SZ 400
+#define SZ 600
 const double deltaX = 1.0/SZ;
 const double deltaY = 1.0/SZ;
 const double sqrdDeltaX = deltaX * deltaX;
@@ -46,7 +46,7 @@ int main()
 	}
 	
 	printf("The result temperature field after %d iterations:\n\n", nSteps);
-	phi.print(std::cout);
+	//phi.print(std::cout);
 	
 	return 0;
 }
