@@ -52,10 +52,10 @@ namespace SpatialOps{
 		TopLevelFlag<Expr>::clear(expr);
 		
 		if(DevicePreference::get() != -1 && !PreferredExecutor<0, Expr>::execute_symexpr(expr))
-			fprintf(stderr, "Warning: Expression execution failed on the preferred device\n");
+		    fprintf(stderr, "Warning: Expression execution failed on the preferred device\n");
 		
 		if(!SymExprExecutor<0, Expr>::execute_symexpr(expr))
-			fprintf(stderr, "failed to execute the expression!\n");
+		    fprintf(stderr, "failed to execute the expression!\n");
 	}
 	
 	template<>

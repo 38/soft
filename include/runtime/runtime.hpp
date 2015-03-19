@@ -86,7 +86,7 @@ namespace SpatialOps{
 		}
 	};
 	
-
+	
 	/* execute the expression on the preferred device */
 	template<int DevId, typename SymExpr>
 	struct PreferredExecutor{

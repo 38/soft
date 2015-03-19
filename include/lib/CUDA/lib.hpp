@@ -23,7 +23,7 @@ namespace CUDALib{
 	template <typename Expr, typename Executable>
 	struct Lib
 	{
-		__device__ static inline Expr eval(int x, int y, int z, const void* e)
+		__device__ static inline Expr eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return get_self<Executable>(e);
 		}
@@ -35,7 +35,7 @@ namespace CUDALib{
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename Executable::OP3Type::CodeType T3;
 		typedef typename ExprTypeInfer<Symbol<Op1, Op2, Op3> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return ScalarLib<Symbol<Op1, Op2, Op3> >::template eval<RetType>(
 			        T1::eval(x, y, z, get_operand_1<Executable>(e)),
@@ -49,7 +49,7 @@ namespace CUDALib{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename ExprTypeInfer<Symbol<left, right> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return ScalarLib<Symbol<left, right> >::template eval<RetType>(
 			        T1::eval(x, y, z, get_operand_1<Executable>(e)),
@@ -61,7 +61,7 @@ namespace CUDALib{
 	struct Lib<Symbol<Operand>, Executable>{
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<Symbol<Operand> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return ScalarLib<Symbol<Operand> >::template eval<RetType>(T1::eval(x, y, z, get_operand_1<Executable>(e)));
 		}
@@ -70,7 +70,7 @@ namespace CUDALib{
 	template <typename T, typename Executable>
 	struct Lib<Field<T>, Executable>{
 		typedef T& RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			const typename Executable::Self s = get_self<Executable>(e);
 			return s._m[(x - s.lx) + (y - s.ly) * (s.hx - s.lx) + (z - s.lz) * (s.hx - s.lx) * (s.hy - s.ly)];
@@ -81,7 +81,7 @@ namespace CUDALib{
 	struct Lib<REFSYM(coordinate)<Dir> , Executable>{
 		typedef typename Executable::Symbol S;
 		typedef int RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return (int)S::X * x + (int)S::Y * y + (int)S::Z * z;
 		}
@@ -92,7 +92,7 @@ namespace CUDALib{
 		typedef typename Executable::Symbol S;
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(shift)<Operand, dx, dy, dz> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return T1::eval(x + (int)S::Dx,
 			                y + (int)S::Dy,
@@ -105,7 +105,7 @@ namespace CUDALib{
 	struct Lib<REFSYM(window)<Operand>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<REFSYM(window)<Operand> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			
 			const typename Executable::Self s = get_self<Executable>(e);
@@ -120,7 +120,7 @@ namespace CUDALib{
 	struct Lib<LValueScalar<T>, Executable> {
 		typedef typename Executable::OP1Type::CodeType T1;
 		typedef typename ExprTypeInfer<LValueScalar<T> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return T1::eval(0,0,0,get_operand_1<Executable>(e));
 		}
@@ -130,7 +130,7 @@ namespace CUDALib{
 	struct Lib<REFSYM(binding)<Var, Op1, Op2>, Executable>{
 		typedef typename Executable::OP2Type::CodeType T2;
 		typedef typename ExprTypeInfer<Op2>::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return T2::eval(x,y,z,get_operand_2<Executable>(e));
 		}
@@ -139,7 +139,7 @@ namespace CUDALib{
 	template <typename Var, typename Executable>
 	struct Lib<REFSYM(ref)<Var>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(ref)<Var> >::R RetType;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			const void* target = (const void*)(((char*)e) + (int)Executable::Offset);
 			return Executable::Target::CodeType::eval(x,y,z, target);
@@ -150,7 +150,7 @@ namespace CUDALib{
 	struct Lib<REFSYM(annotation)<Operand, Annotation>, Executable>{
 		typedef typename ExprTypeInfer<REFSYM(annotation)<Operand, Annotation> >::R RetType;
 		typedef typename Executable::OP1Type::CodeType T1;
-		__device__ static inline RetType eval(int x, int y, int z, const void* e)
+		__device__ static inline RetType eval(int x, int y, int z, const void* __restrict__ e)
 		{
 			return T1::eval(x, y, z, e);
 		}
