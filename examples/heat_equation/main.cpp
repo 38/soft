@@ -1,6 +1,6 @@
 #include <spatialops.hpp>
 using namespace SpatialOps;
-#define SZ 6
+#define SZ 600
 const double deltaX = 1.0/SZ;
 const double deltaY = 1.0/SZ;
 const double sqrdDeltaX = deltaX * deltaX;
@@ -20,6 +20,9 @@ void set_boundary(Field<double>& phi)
 }
 int main()
 {
+	/* clear the device preference option */
+	DevicePreference::clear();
+
 	Field<double> phi(-1,-1,0,SZ + 1,SZ + 1,1);
 	Field<double> rhs(0, 0 ,0, SZ, SZ, 1);
 	LValueScalar<double> deltaT;
@@ -36,7 +39,7 @@ int main()
 	set_boundary(phi);
 	
 	/* Do the iteration! */
-	int nSteps = 40;
+	int nSteps = 1000;
 	for(int i = 0; i < nSteps; i ++)
 	{
 		rhs <<= let<X>(alpha,let<Y>(phi,(DivR<XDir>( Interp<XDir>(ref<X>()) * Div<XDir>(ref<Y>())) +

@@ -21,5 +21,22 @@ namespace SpatialOps{
 			return e;
 		}
 	};
+	
+	/** Store the device preference option **/
+	struct DevicePreference{
+		typedef StaticVar<DevicePreference, int> preferred_device;
+		static inline void clear()
+		{
+			preferred_device::get() = -1;
+		}
+		static inline void set(int device_idx)
+		{
+			preferred_device::get() = device_idx;
+		}
+		static inline int get()
+		{
+			return preferred_device::get();
+		}
+	};
 }
 #endif

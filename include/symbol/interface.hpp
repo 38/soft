@@ -41,18 +41,21 @@ namespace SpatialOps{
 	/* Get The Direction */
 	template<typename D> struct GetDirectVec;
 	
-	/* Execute the symbol */
+	/* Previous defs of runtime templates */
 	template <int DevId, typename SymExpr> struct PreferredExecutor;
+	template <int DevId, typename SymExpr> struct SymExprExecutor;
 	
 	/* Run the symbolic expression */
 	template <class Expr>
 	static inline void run(const Expr& expr)
 	{
 		TopLevelFlag<Expr>::clear(expr);
-		if(!PreferredExecutor<0, Expr>::execute_symexpr(expr))
-		{
+		
+		if(DevicePreference::get() != -1 && !PreferredExecutor<0, Expr>::execute_symexpr(expr))
+			fprintf(stderr, "Warning: Expression execution failed on the preferred device\n");
+		
+		if(!SymExprExecutor<0, Expr>::execute_symexpr(expr))
 			fprintf(stderr, "failed to execute the expression!\n");
-		}
 	}
 	
 	template<>
