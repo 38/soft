@@ -11,4 +11,4 @@ $(TARGET): $(OBJS)
 	g++ -MM -D__CUDACC__ $(INCLUDEDIR) $*.cpp > $*.d
 
 clean:
-	rm -f main *.o *.d
+	rm -f main *.o *.d $(TARGET)

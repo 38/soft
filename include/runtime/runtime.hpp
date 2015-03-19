@@ -85,5 +85,48 @@ namespace SpatialOps{
 			return false;
 		}
 	};
+	
+	struct DevicePreference{
+		typedef StaticVar<DevicePreference, int> preferred_device;
+		static inline void clear()
+		{
+			preferred_device::get() = -1;
+		}
+		static inline void set(int device_idx)
+		{
+			preferred_device::get() = device_idx;
+		}
+		static inline int get()
+		{
+			return preferred_device::get();
+		}
+	};
+	
+	template<int DevId, typename SymExpr>
+	struct PreferredExecutor{
+		static inline bool execute_symexpr(const SymExpr& expr){
+			if(DevicePreference::get() == -1)
+			    return SymExprExecutor<0, SymExpr>::execute_symexpr(expr);
+			if(DevicePreference::get() == DevId)
+			{
+				typedef Linker<DevId, SymExpr> LinkerType;
+				typedef typename LinkerType::Exec Exec;
+				typename LinkerType::CodeType e;
+				LinkerType::link(expr, e);
+				if(!data_validate<DevId, Exec>((void*)e, expr) || !GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr))
+				    return SymExprExecutor<0, SymExpr>::execute_symexpr(expr);
+				return true;
+			}
+			else return PreferredExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);
+		}
+	};
+	template <typename SymExpr>
+	struct PreferredExecutor<NUM_DEVICE_TYPES, SymExpr>{
+		static inline bool execute_symexpr(const SymExpr& expr)
+		{
+			return PreferredExecutor<0, SymExpr>::execute_symexpr(expr);
+		}
+	};
+	
 }
 #endif

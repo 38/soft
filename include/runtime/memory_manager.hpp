@@ -11,7 +11,7 @@ namespace SpatialOps {
 			unsigned size;
 			dev_mem_ptr_t mem;
 			int timestamp;
-			inline MemoryMapValue(unsigned sz): ref_cnt(0), mem(GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer()), size(sz), timestamp(-1){}
+			inline MemoryMapValue(unsigned sz): ref_cnt(0),  size(sz), mem(GetDeviceRuntimeEnv<DeviceType>::R::get_null_pointer()), timestamp(-1){}
 			inline void incref()
 			{
 				ref_cnt ++;
@@ -38,6 +38,8 @@ namespace SpatialOps {
 		};
 		
 		typedef StaticVar<InvokeDeviceMM, std::map<int, MemoryMapValue*> > memory_map;
+		
+		#ifdef AUTO_MEMORY_COPY_SUPPRESS
 		typedef StaticVar<InvokeDeviceMM, bool> disable_memory_copy;
 		
 		static inline void disable_automatic_memcpy()
@@ -49,6 +51,7 @@ namespace SpatialOps {
 		{
 			disable_memory_copy::get() = true;
 		}
+		#endif
 		
 		static inline void notify_construct(int id, unsigned size)
 		{
@@ -102,8 +105,10 @@ namespace SpatialOps {
 		{
 			/* if the device is already updated */
 			if(uptodate_dev == DeviceType) return true;
+			#ifdef AUTO_MEMORY_COPY_SUPPRESS
 			/* if the auto copy is disabled on this device */
 			if(disable_memory_copy::get()) return false;
+			#endif
 			/* get the CPU memory as buffer for transfer */
 			void* host_mem = InvokeDeviceMM<DEVICE_TYPE_CPU>::get_memory(id);
 			

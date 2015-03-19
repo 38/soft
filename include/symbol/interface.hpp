@@ -42,14 +42,14 @@ namespace SpatialOps{
 	template<typename D> struct GetDirectVec;
 	
 	/* Execute the symbol */
-	template <int DevId, typename SymExpr> struct SymExprExecutor;
+	template <int DevId, typename SymExpr> struct PreferredExecutor;
 	
 	/* Run the symbolic expression */
 	template <class Expr>
 	static inline void run(const Expr& expr)
 	{
 		TopLevelFlag<Expr>::clear(expr);
-		if(!SymExprExecutor<0, Expr>::execute_symexpr(expr))
+		if(!PreferredExecutor<0, Expr>::execute_symexpr(expr))
 		{
 			fprintf(stderr, "failed to execute the expression!\n");
 		}

@@ -102,7 +102,7 @@ namespace SpatialOps{
 		inline int getid() const {return _identifier;}
 		
 		template<typename OutStream>
-		inline void print(OutStream& os) const
+		inline void dump(OutStream& os) const
 		{
 			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
 			int lx, ly, lz, hx, hy, hz;
@@ -118,6 +118,14 @@ namespace SpatialOps{
 				os << std::endl;
 			}
 			os << std::endl;
+		}
+		
+		inline T& operator()(int x, int y, int z)
+		{
+			T* _device_memory = get_memory<DEVICE_TYPE_CPU>();
+			int lx, ly, lz, hx, hy, hz;
+			get_range(lx, ly, lz, hx, hy, hz);
+			return _device_memory[(x - lx) + (y - ly) * (hx - lx) + (z - lz) * (hx - lx) * (hy - ly)];
 		}
 		
 		private:

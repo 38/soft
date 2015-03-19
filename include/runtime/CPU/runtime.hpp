@@ -40,10 +40,10 @@ namespace CPURuntime{
 			if(lx == INT_MIN || hx == INT_MAX) lx = 0, hx = 1;
 			if(ly == INT_MIN || hy == INT_MAX) ly = 0, hy = 1;
 			if(lz == INT_MIN || hz == INT_MAX) lz = 0, hz = 1;
-
+			
 			/* Load the arguments before the execution, otherwise compiler will load the arguments for each loop */
 			Executable::CodeType::load_arg(e);
-
+			
 			/* do the actual ops */
 			for(int z = lz; z < hz; z ++)
 			    for(int y = ly; y < hy; y ++)

@@ -9,6 +9,6 @@ int main()
 	Field<double> C(0,0,0,2,2,2);
 	C <<= A + B;
 	print_expr(C <<= A + B);
-	C.print();
+	C.dump(std::cout);
 	return 0;
 }
