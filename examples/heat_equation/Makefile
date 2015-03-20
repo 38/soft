@@ -1,5 +1,5 @@
-CXX=clang++-3.6
-CXXFLAGS=-O3 -g -Wall -Werror
+CXX=g++
+CXXFLAGS=-O3 -g
 LIBDIR=../..
 TARGET=heat_equation
 OBJS=main.o

@@ -24,23 +24,23 @@ namespace CUDARuntime{
 	}
 	struct CUDARunTimeEnv{
 		typedef void* DeviceMemory;
-		static inline void* allocate(unsigned size)
+		static inline DeviceMemory allocate(unsigned size)
 		{
 			void* ptr;
 			if(cudaSuccess != cudaMalloc(&ptr, size)) return NULL;
 			return ptr;
 		}
-		static inline void deallocate(DeviceMemory mem)
+		static inline bool deallocate(DeviceMemory mem)
 		{
-			cudaFree(mem);
+			return cudaSuccess == cudaFree(mem);
 		}
-		static inline void copy_from_host(DeviceMemory dest, void* sour, unsigned size)
+		static inline bool copy_from_host(DeviceMemory dest, void* sour, unsigned size)
 		{
-			cudaMemcpy(dest, sour, size, cudaMemcpyHostToDevice);
+			return cudaSuccess == cudaMemcpy(dest, sour, size, cudaMemcpyHostToDevice);
 		}
-		static inline void copy_to_host(void* dest, DeviceMemory sour, unsigned size)
+		static inline bool copy_to_host(void* dest, DeviceMemory sour, unsigned size)
 		{
-			cudaMemcpy(dest, sour, size, cudaMemcpyDeviceToHost);
+			return cudaSuccess == cudaMemcpy(dest, sour, size, cudaMemcpyDeviceToHost);
 		}
 		static inline DeviceMemory get_null_pointer()
 		{
@@ -88,8 +88,8 @@ namespace CUDARuntime{
 				{
 					return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
 				}
-				//puts("Fixme: Use the CUDA Reduction Kernel");
-				//return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
+				puts("Fixme: Use the CUDA Reduction Kernel");
+				return Executor<typename Executable::Symbol::Operand, typename Executable::OP1Type, ParamType>::execute(e, s.operand);
 			}
 			
 		};

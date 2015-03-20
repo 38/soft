@@ -97,7 +97,7 @@ namespace SpatialOps{
 				typedef typename LinkerType::Exec Exec;
 				typename LinkerType::CodeType e;
 				LinkerType::link(expr, e);
-				return (!data_validate<DevId, Exec>((void*)e, expr) || !GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr));
+				return data_validate<DevId, Exec>((void*)e, expr) && GetDeviceRuntimeEnv<DevId>::R::template execute<Exec>(e, expr);
 			}
 			return PreferredExecutor<DevId + 1, SymExpr>::execute_symexpr(expr);
 		}
